@@ -68,6 +68,9 @@ spec:
         - name: kafka-config
           mountPath: /opt/bitnami/kafka/config/server.properties
           subPath: server.properties
+        - name: kafka-scripts
+          mountPath: /docker-entrypoint-initdb.d
+          readOnly: true
         readinessProbe:
           tcpSocket:
             port: 9092
@@ -90,6 +93,10 @@ spec:
       - name: kafka-config
         configMap:
           name: {{ include "thingsboard-pe.fullname" . }}-kafka-config
+      - name: kafka-scripts
+        configMap:
+          name: {{ include "thingsboard-pe.fullname" . }}-kafka-scripts
+          defaultMode: 0755
       restartPolicy: Always
   volumeClaimTemplates:
   - metadata:

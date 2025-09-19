@@ -39,6 +39,12 @@ spec:
         volumeMounts:
         - name: redis-storage
           mountPath: /bitnami/redis/data
+        - name: redis-config
+          mountPath: /opt/bitnami/redis/mounted-etc
+          readOnly: true
+        - name: redis-health
+          mountPath: /health
+          readOnly: true
         readinessProbe:
           exec:
             command:
@@ -65,5 +71,12 @@ spec:
       - name: redis-storage
         persistentVolumeClaim:
           claimName: {{ include "thingsboard-pe.fullname" . }}-redis-storage
+      - name: redis-config
+        configMap:
+          name: {{ include "thingsboard-pe.fullname" . }}-redis-configuration
+      - name: redis-health
+        configMap:
+          name: {{ include "thingsboard-pe.fullname" . }}-redis-health
+          defaultMode: 0755
       restartPolicy: Always
 {{- end }}

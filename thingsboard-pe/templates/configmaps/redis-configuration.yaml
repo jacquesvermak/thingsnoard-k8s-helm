@@ -1,0 +1,91 @@
+{{- if .Values.redis.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "thingsboard-pe.fullname" . }}-redis-configuration
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis-config
+data:
+  master.conf: |-
+    dir /data
+    # User-supplied master configuration:
+    rename-command FLUSHALL ""
+    # End of master configuration
+  redis.conf: |-
+    # User-supplied common configuration:
+    # Enable AOF https://redis.io/topics/persistence#append-only-file
+    appendonly yes
+    # Disable RDB persistence, AOF persistence already enabled.
+    save ""
+    # End of common configuration
+    auto-aof-rewrite-percentage 100
+    auto-aof-rewrite-min-size 32mb
+    maxmemory {{ .Values.redis.master.resources.limits.memory | default "8gb" }}
+    maxmemory-policy allkeys-lru
+    tcp-keepalive 60
+    {{- if .Values.redis.auth.enabled }}
+    requirepass {{ .Values.redis.auth.password }}
+    {{- end }}
+  replica.conf: |-
+    dir /data
+    slave-read-only yes
+    # User-supplied replica configuration:
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+    {{- if .Values.redis.auth.enabled }}
+    masterauth {{ .Values.redis.auth.password }}
+    requirepass {{ .Values.redis.auth.password }}
+    {{- end }}
+    # End of replica configuration
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "thingsboard-pe.fullname" . }}-redis-health
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis-config
+data:
+  ping_readiness_local.sh: |-
+    #!/bin/bash
+    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
+    [[ -n "$REDIS_PASSWORD" ]] && export REDISCLI_AUTH="$REDIS_PASSWORD"
+    response=$(
+      timeout -s 3 $1 \
+      redis-cli \
+        -h localhost \
+        -p $REDIS_PORT \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_liveness_local.sh: |-
+    #!/bin/bash
+    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
+    [[ -n "$REDIS_PASSWORD" ]] && export REDISCLI_AUTH="$REDIS_PASSWORD"
+    response=$(
+      timeout -s 3 $1 \
+      redis-cli \
+        -h localhost \
+        -p $REDIS_PORT \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    responseFirstWord=$(echo $response | head -n1 | awk '{print $1;}')
+    if [ "$response" != "PONG" ] && [ "$responseFirstWord" != "LOADING" ] && [ "$responseFirstWord" != "MASTERDOWN" ]; then
+      echo "$response"
+      exit 1
+    fi
+{{- end }}

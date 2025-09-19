@@ -55,6 +55,9 @@ spec:
         volumeMounts:
         - name: zookeeper-storage
           mountPath: /bitnami/zookeeper
+        - name: zookeeper-scripts
+          mountPath: /docker-entrypoint-initdb.d
+          readOnly: true
         readinessProbe:
           exec:
             command:
@@ -77,6 +80,11 @@ spec:
           failureThreshold: 3
         resources:
           {{- toYaml .Values.zookeeper.resources | nindent 10 }}
+      volumes:
+      - name: zookeeper-scripts
+        configMap:
+          name: {{ include "thingsboard-pe.fullname" . }}-zookeeper-scripts
+          defaultMode: 0755
       restartPolicy: Always
   volumeClaimTemplates:
   - metadata:

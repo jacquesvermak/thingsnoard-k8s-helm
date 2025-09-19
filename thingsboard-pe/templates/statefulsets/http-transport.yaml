@@ -54,8 +54,20 @@ spec:
           timeoutSeconds: 5
           successThreshold: 1
           failureThreshold: 3
+        volumeMounts:
+        - name: http-transport-config
+          mountPath: /config
         resources:
           {{- toYaml .Values.thingsboard.transports.http.resources | nindent 10 }}
+      volumes:
+      - name: http-transport-config
+        configMap:
+          name: {{ include "thingsboard-pe.fullname" . }}-http-transport-config
+          items:
+          - key: conf
+            path: tb-http-transport.conf
+          - key: logback
+            path: logback.xml
       restartPolicy: Always
 ---
 apiVersion: v1
