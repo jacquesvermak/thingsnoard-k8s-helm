@@ -1,3 +1,13 @@
+# ThingsBoard PE Helm Chart Configuration
+# 
+# This file contains default values for development/testing environments.
+# For production deployments:
+# 1. Copy this file: cp values.yaml values-production.yaml
+# 2. Customize values-production.yaml for your environment
+# 3. Deploy: helm install thingsboard-pe . -f values-production.yaml
+#
+# SECURITY: Never commit real certificates or secrets to version control!
+
 # Global configuration
 global:
   namespace: thingsboard-qa

@@ -95,15 +95,16 @@ helm install thingsboard-pe ./thingsboard-pe \
   -n thingsboard
 ```
 
-#### Option 3: Values File (Use with Caution)
+#### Option 3: Custom Values File (Use with Caution)
 ```bash
-# Copy example and customize
-cp values-secure-example.yaml values-production.yaml
+# Create your own values file for production
+cp values.yaml values-production.yaml
 
-# Edit values-production.yaml with real certificates
-# Add to .gitignore: echo "values-production.yaml" >> .gitignore
+# Edit values-production.yaml with your real certificates and settings
+# Add to .gitignore to prevent accidental commits
+echo "values-production.yaml" >> .gitignore
 
-# Deploy
+# Deploy with your custom values
 helm install thingsboard-pe ./thingsboard-pe \
   -f values-production.yaml \
   -n thingsboard

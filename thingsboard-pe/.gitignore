@@ -4,7 +4,6 @@
 values-production.yaml
 values-staging.yaml
 values-*.yaml
-!values-secure-example.yaml
 certs/
 *.pem
 *.key
