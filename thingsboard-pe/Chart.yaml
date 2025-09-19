@@ -1,0 +1,24 @@
+apiVersion: v2
+name: thingsboard-pe
+description: A Helm chart for ThingsBoard Professional Edition with complete infrastructure
+type: application
+version: 0.1.0
+appVersion: "4.0.1"
+home: https://thingsboard.io/
+sources:
+  - https://github.com/jacquesvermak/thingsboard-k8s
+keywords:
+  - thingsboard
+  - iot
+  - platform
+  - cassandra
+  - kafka
+  - redis
+  - coap
+  - dtls
+maintainers:
+  - name: Jacques Vermak
+    email: jacques@stagezero.co.za
+annotations:
+  category: IoT Platform
+dependencies: []

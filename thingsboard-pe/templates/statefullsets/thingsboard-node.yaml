@@ -1,0 +1,241 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    field.cattle.io/publicEndpoints: '[{"addresses":[""],"port":443,"protocol":"HTTPS","serviceName":"thingsboard-qa:thingsboard-node","ingressName":"thingsboard-qa:tb-ingress","hostname":"thingsboard.qa.stagezero.co.za","path":"/api(/|$)(.*)","allNodes":false},{"addresses":[""],"port":443,"protocol":"HTTPS","serviceName":"thingsboard-qa:thingsboard-node","ingressName":"thingsboard-qa:tb-ingress","hostname":"thingsboard.qa.stagezero.co.za","path":"/api/ws","allNodes":false},{"addresses":[""],"port":443,"protocol":"HTTPS","serviceName":"thingsboard-qa:thingsboard-node","ingressName":"thingsboard-qa:tb-ingress","hostname":"thingsboard.qa.stagezero.co.za","path":"/swagger-ui(/|$)(.*)","allNodes":false},{"addresses":[""],"port":443,"protocol":"HTTPS","serviceName":"thingsboard-qa:thingsboard-node","ingressName":"thingsboard-qa:tb-ingress","hostname":"thingsboard.qa.stagezero.co.za","path":"/v3/api-docs","allNodes":false}]'
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"StatefulSet","metadata":{"annotations":{},"name":"thingsboard-node","namespace":"thingsboard-qa"},"spec":{"persistentVolumeClaimRetentionPolicy":{"whenDeleted":"Retain","whenScaled":"Retain"},"podManagementPolicy":"Parallel","replicas":1,"selector":{"matchLabels":{"app.kubernetes.io/instance":"thingsboard-node","app.kubernetes.io/name":"thingsboard-node"}},"serviceName":"tb-node","template":{"metadata":{"annotations":{"admission.datadoghq.com/java-lib.version":"v1.45.2","prometheus.io/path":"/actuator/prometheus","prometheus.io/port":"8080","prometheus.io/scrape":"true"},"labels":{"app.kubernetes.io/instance":"thingsboard-node","app.kubernetes.io/name":"thingsboard-node","tags.datadoghq.com/service":"tb-node","tags.datadoghq.com/version":"4.0.1PE"}},"spec":{"affinity":{"podAntiAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":[{"labelSelector":{"matchLabels":{"app.kubernetes.io/name":"thingsboard-node"}},"topologyKey":"kubernetes.io/hostname"}]}},"containers":[{"env":[{"name":"TB_SERVICE_ID","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.name"}}},{"name":"AWS_STS_REGIONAL_ENDPOINTS","value":"regional"},{"name":"AWS_DEFAULT_REGION","value":"af-south-1"},{"name":"AWS_REGION","value":"af-south-1"},{"name":"AWS_ROLE_ARN","value":"arn:aws:iam::635245507811:role/EC2AssumeRoleTest"},{"name":"AWS_WEB_IDENTITY_TOKEN_FILE","value":"/var/run/secrets/eks.amazonaws.com/serviceaccount/token"},{"name":"TB_LICENSE_SERVER_URL","value":"https://license.thingsboard.io"},{"name":"TB_LICENSE_CHECK_INTERVAL_MS","value":"60000"},{"name":"TB_LICENSE_RETRY_INTERVAL_MS","value":"10000"},{"name":"TB_LICENSE_VALIDATION_ENABLED","value":"true"},{"name":"TB_LICENSE_VALIDATION_RETRY_COUNT","value":"10"},{"name":"TB_LICENSE_VALIDATION_RETRY_DELAY_MS","value":"30000"}],"envFrom":[{"configMapRef":{"name":"thingsboard-node-db-config"}}],"image":"docker.io/thingsboard/tb-pe-node:4.0.1PE","imagePullPolicy":"Always","livenessProbe":{"failureThreshold":3,"httpGet":{"path":"/login","port":"http","scheme":"HTTP"},"initialDelaySeconds":360,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":10},"name":"thingsboard","ports":[{"containerPort":8080,"name":"http","protocol":"TCP"},{"containerPort":9090,"name":"rpc","protocol":"TCP"}],"readinessProbe":{"failureThreshold":3,"httpGet":{"path":"/login","port":"http","scheme":"HTTP"},"initialDelaySeconds":15,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":10},"resources":{"limits":{"cpu":"8","memory":"30Gi"},"requests":{"cpu":"5","memory":"20Gi"}},"volumeMounts":[{"mountPath":"/config","name":"thingsboard-node-config"},{"mountPath":"/var/log/thingsboard","name":"thingsboard-node-logs"},{"mountPath":"/opt/truststore","name":"tb-truststore-volume","readOnly":true},{"mountPath":"/var/log/tb","name":"gc-logs"}]}],"restartPolicy":"Always","schedulerName":"default-scheduler","serviceAccountName":"thingsboard-node-sa","terminationGracePeriodSeconds":30,"tolerations":[{"effect":"NoExecute","key":"node.kubernetes.io/not-ready","operator":"Exists","tolerationSeconds":300},{"effect":"NoExecute","key":"node.kubernetes.io/unreachable","operator":"Exists","tolerationSeconds":300}],"volumes":[{"name":"aws-iam-token","projected":{"sources":[{"serviceAccountToken":{"audience":"sts.amazonaws.com","expirationSeconds":86400,"path":"token"}}]}},{"configMap":{"items":[{"key":"conf","path":"thingsboard.conf"},{"key":"logback","path":"logback.xml"}],"name":"thingsboard-node-config"},"name":"thingsboard-node-config"},{"emptyDir":{},"name":"thingsboard-node-logs"},{"emptyDir":{},"name":"gc-logs"},{"name":"tb-truststore","secret":{"secretName":"tb-truststore"}},{"name":"jvm-cacerts","secret":{"secretName":"tb-truststore"}},{"name":"tb-truststore-volume","secret":{"secretName":"tb-truststore"}},{"name":"kube-api-access-d2xzc","projected":{"sources":[{"serviceAccountToken":{"expirationSeconds":3607,"path":"token"}},{"configMap":{"items":[{"key":"ca.crt","path":"ca.crt"}],"name":"kube-root-ca.crt"}},{"downwardAPI":{"items":[{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.namespace"},"path":"namespace"}]}}]}},{"emptyDir":{},"name":"license-data"}]}},"updateStrategy":{"rollingUpdate":{"partition":0},"type":"RollingUpdate"},"volumeClaimTemplates":[{"metadata":{"name":"thingsboard-node-data"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"10Gi"}},"storageClassName":"tb-dynamic-sc"}}]}}
+    meta.helm.sh/release-name: thingsboard
+    meta.helm.sh/release-namespace: thingsboard-qa
+  creationTimestamp: "2025-08-21T08:37:50Z"
+  generation: 274
+  labels:
+    app.kubernetes.io/instance: thingsboard
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: thingsboard
+    app.kubernetes.io/version: 3.5.1
+    helm.sh/chart: thingsboard-0.1.4-rc.51
+    k8slens-edit-resource-version: v1
+    tags.datadoghq.com/service: tb-node
+    tags.datadoghq.com/version: 4.0.1PE
+  name: thingsboard-node
+  namespace: thingsboard-qa
+  resourceVersion: "211784719"
+  uid: e27a9585-0757-4aa3-96fd-c41e8a03a97f
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  podManagementPolicy: Parallel
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: thingsboard-node
+      app.kubernetes.io/name: thingsboard-node
+  serviceName: tb-node
+  template:
+    metadata:
+      annotations:
+        admission.datadoghq.com/java-lib.version: v1.45.2
+        kubectl.kubernetes.io/restartedAt: "2025-09-19T07:48:51+02:00"
+        prometheus.io/path: /actuator/prometheus
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+      creationTimestamp: null
+      labels:
+        admission.datadoghq.com/enabled: "true"
+        app.kubernetes.io/instance: thingsboard-node
+        app.kubernetes.io/name: thingsboard-node
+        tags.datadoghq.com/service: tb-node
+        tags.datadoghq.com/version: 4.0.1PE
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: thingsboard-node
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: thingsboard-node
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - env:
+        - name: TB_SERVICE_ID
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: AWS_STS_REGIONAL_ENDPOINTS
+          value: regional
+        - name: AWS_DEFAULT_REGION
+          value: af-south-1
+        - name: AWS_REGION
+          value: af-south-1
+        - name: AWS_ROLE_ARN
+          value: arn:aws:iam::635245507811:role/EC2AssumeRoleTest
+        - name: AWS_WEB_IDENTITY_TOKEN_FILE
+          value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+        - name: SWAGGER_ENABLED
+          value: "true"
+        - name: TB_LICENSE_SECRET
+          value: biGeBHrEO4LaxCqPQa9imyFL
+        - name: INSTALL_DATA_DIR
+          value: /usr/share/thingsboard
+        - name: TB_LICENSE_VALIDATION_ENABLED
+          value: "false"
+        - name: TB_SOLUTIONS_ENABLED
+          value: "false"
+        - name: TB_KAFKA_SERVERS
+          value: thingsboard-kafka:9092
+        - name: COAP_DTLS_ENABLED
+          value: "true"
+        - name: COAP_DTLS_CREDENTIALS_TYPE
+          value: PEM
+        - name: COAP_DTLS_PEM_CERT
+          value: /https-config/server.pem
+        - name: COAP_DTLS_PEM_KEY
+          value: /https-config/server_key.pem
+        - name: COAP_TRANSPORT_HOST
+          value: thingsboard-coap.thingsboard-qa.svc.cluster.local
+        - name: COAP_DTLS_BIND_PORT
+          value: "5684"
+        - name: COAP_DTLS_BIND_ADDRESS
+          value: 0.0.0.0
+        envFrom:
+        - configMapRef:
+            name: thingsboard-node-db-config
+        image: docker.io/thingsboard/tb-pe-node:4.0.1PE
+        imagePullPolicy: IfNotPresent
+        name: thingsboard
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        - containerPort: 9090
+          name: rpc
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "12"
+            memory: 25Gi
+          requests:
+            cpu: "6"
+            memory: 20Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /config
+          name: thingsboard-node-config
+        - mountPath: /var/log/thingsboard
+          name: thingsboard-node-logs
+        - mountPath: /opt/truststore
+          name: tb-truststore-volume
+          readOnly: true
+        - mountPath: /var/log/tb
+          name: gc-logs
+        - mountPath: /usr/share/thingsboard/json/solutions
+          name: thingsboard-solutions
+          readOnly: true
+        - mountPath: /https-config
+          name: coap-pem-configmap
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: thingsboard
+      serviceAccountName: thingsboard
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - effect: NoExecute
+        key: node.kubernetes.io/not-ready
+        operator: Exists
+        tolerationSeconds: 300
+      - effect: NoExecute
+        key: node.kubernetes.io/unreachable
+        operator: Exists
+        tolerationSeconds: 300
+      volumes:
+      - name: aws-iam-token
+        projected:
+          defaultMode: 420
+          sources:
+          - serviceAccountToken:
+              audience: sts.amazonaws.com
+              expirationSeconds: 86400
+              path: token
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: conf
+            path: thingsboard.conf
+          - key: logback
+            path: logback.xml
+          name: thingsboard-node-config
+        name: thingsboard-node-config
+      - emptyDir: {}
+        name: thingsboard-node-logs
+      - emptyDir: {}
+        name: gc-logs
+      - name: tb-truststore
+        secret:
+          defaultMode: 420
+          secretName: tb-truststore
+      - name: jvm-cacerts
+        secret:
+          defaultMode: 420
+          secretName: tb-truststore
+      - name: tb-truststore-volume
+        secret:
+          defaultMode: 420
+          secretName: tb-truststore
+      - emptyDir: {}
+        name: license-data
+      - configMap:
+          defaultMode: 420
+          name: thingsboard-solutions
+        name: thingsboard-solutions
+      - configMap:
+          defaultMode: 444
+          items:
+          - key: server.pem
+            path: server.pem
+          - key: server_key.pem
+            path: server_key.pem
+          name: coap-pem-configmap
+        name: coap-pem-configmap
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      creationTimestamp: null
+      name: thingsboard-node-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: tb-dynamic-sc
+      volumeMode: Filesystem
+    status:
+      phase: Pending
+status:
+  availableReplicas: 1
+  collisionCount: 0
+  currentReplicas: 1
+  currentRevision: thingsboard-node-6ff4cfc8c9
+  observedGeneration: 274
+  readyReplicas: 1
+  replicas: 1
+  updateRevision: thingsboard-node-6ff4cfc8c9
+  updatedReplicas: 1
