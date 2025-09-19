@@ -1,0 +1,24 @@
+{{- if .Values.thingsboard.transports.coap.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "thingsboard-pe.fullname" . }}-coap
+  namespace: {{ include "thingsboard-pe.namespace" . }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: coap-transport
+  {{- with .Values.thingsboard.transports.coap.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.thingsboard.transports.coap.service.type }}
+  ports:
+  - port: {{ .Values.thingsboard.transports.coap.port }}
+    targetPort: coap-dtls
+    protocol: UDP
+    name: coap-dtls
+  selector:
+    {{- include "thingsboard-pe.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: coap-transport
+{{- end }}
