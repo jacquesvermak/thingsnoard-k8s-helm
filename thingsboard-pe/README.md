@@ -61,6 +61,64 @@ helm install thingsboard-pe ./thingsboard-pe \
   -n thingsboard-prod
 ```
 
+## Security Configuration
+
+### ⚠️ IMPORTANT: Certificate Management
+
+**NEVER commit real certificates to version control!**
+
+The default `values.yaml` contains placeholder certificates. For production deployment:
+
+#### Option 1: External Secret Management (Recommended)
+```bash
+# Use external-secrets-operator, HashiCorp Vault, or similar
+# Example with Kubernetes secrets:
+kubectl create secret tls coap-dtls-certs \
+  --cert=server.pem \
+  --key=server.key \
+  -n thingsboard
+
+# Mount as volume in Helm chart
+```
+
+#### Option 2: Helm Command Line (Recommended)
+```bash
+# Generate DTLS certificates
+openssl ecparam -genkey -name secp256r1 -out server.key
+openssl req -new -x509 -key server.key -out server.pem -days 365 \
+  -subj "/CN=your-coap-endpoint.domain.com"
+
+# Deploy with certificates
+helm install thingsboard-pe ./thingsboard-pe \
+  --set-file security.certificates.dtls.serverCert=./server.pem \
+  --set-file security.certificates.dtls.serverKey=./server.key \
+  -n thingsboard
+```
+
+#### Option 3: Values File (Use with Caution)
+```bash
+# Copy example and customize
+cp values-secure-example.yaml values-production.yaml
+
+# Edit values-production.yaml with real certificates
+# Add to .gitignore: echo "values-production.yaml" >> .gitignore
+
+# Deploy
+helm install thingsboard-pe ./thingsboard-pe \
+  -f values-production.yaml \
+  -n thingsboard
+```
+
+### Security Checklist
+
+- [ ] Replace default Redis password
+- [ ] Use proper DTLS certificates for your domain
+- [ ] Enable TLS for database connections
+- [ ] Configure network policies
+- [ ] Use secrets management for sensitive data
+- [ ] Regular certificate rotation
+- [ ] Monitor certificate expiration
+
 ## Configuration
 
 ### Core Values

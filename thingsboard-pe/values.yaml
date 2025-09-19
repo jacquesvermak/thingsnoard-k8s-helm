@@ -197,29 +197,31 @@ security:
   certificates:
     enabled: true
     dtls:
+      # SECURITY WARNING: Replace these placeholders with your actual certificates
+      # DO NOT commit real certificates to version control!
+      # 
+      # To generate DTLS certificates:
+      # openssl ecparam -genkey -name secp256r1 -out server.key
+      # openssl req -new -x509 -key server.key -out server.pem -days 365 \
+      #   -subj "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=your-coap-endpoint"
+      #
+      # Then add them via Helm values or external secret management:
+      # --set security.certificates.dtls.serverCert="$(cat server.pem)"
+      # --set security.certificates.dtls.serverKey="$(cat server.key)"
+      
       serverCert: |
-        -----BEGIN CERTIFICATE-----
-        MIIBdTCCAZsCFENbCvDkHJ//r9nuIDynYYlYpAzzMAoGCCqGSM49BAMCMH0xCzAJ
-        BgNVBAYTAlpBMRUwEwYDVQQIDAxXZXN0ZXJuIENhcGUxEjAQBgNVBAcMCUNhcGUg
-        VG93bjESMBAGA1UECgwJU3RhZ2VaZXJvMQ0wCwYDVQQLDARDb0FQMSAwHgYDVQQD
-        DBdjb2FwLnFhLnN0YWdlemVyby5jby56YTAeFw0yNDExMTIwNjA0MjBaFw0yNTEx
-        MTIwNjA0MjBaMH0xCzAJBgNVBAYTAlpBMRUwEwYDVQQIDAxXZXN0ZXJuIENhcGUx
-        EjAQBgNVBAcMCUNhcGUgVG93bjESMBAGA1UECgwJU3RhZ2VaZXJvMQ0wCwYDVQQL
-        DARDb0FQMSAwHgYDVQQDDBdjb2FwLnFhLnN0YWdlemVyby5jby56YTBZMBMGByqG
-        SM49AgEGCCqGSM49AwEHA0IABMdgAHc1Y4LoOPZ5x0eiypYx2veZaKpQKq7djXt6
-        rZOUD7u35YMTkDtJ/7Obq+TxQR5c52Elj65u+zW0yrANU80wCgYIKoZIzj0EAwID
-        SAAwRQIhAO3qH7xjVewGUmqpJCQdLOv4XVPqiBtlJ69hzP/BXOz9AiAxJG1wPKkw
-        P5cjGDZCEOJZ1cX3myRk6SdB3Qwjm7MxHA==
-        -----END CERTIFICATE-----
+        # PLACEHOLDER: Add your DTLS server certificate here
+        # Example format:
+        # -----BEGIN CERTIFICATE-----
+        # MIIBdTCCAZsCFE...your_certificate_content_here...
+        # -----END CERTIFICATE-----
+        
       serverKey: |
-        -----BEGIN EC PARAMETERS-----
-        BggqhkjOPQMBBw==
-        -----END EC PARAMETERS-----
-        -----BEGIN EC PRIVATE KEY-----
-        MHcCAQEEINj2OLQ2wOSSELhxVe8M+/28oA6pGa/nBGoERspT8dU1oAoGCCqGSM49
-        AwEHoUQDQgAEx2AAdzVjgug49nnHR6LKljHa95loqlAqrt2Ne3qtk5QPu7flgxOQ
-        O0n/s5ur5PFBHlznYSWPrm77NbTKsA1TzQ==
-        -----END EC PRIVATE KEY-----
+        # PLACEHOLDER: Add your DTLS private key here  
+        # Example format:
+        # -----BEGIN EC PRIVATE KEY-----
+        # MHcCAQEEI...your_private_key_content_here...
+        # -----END EC PRIVATE KEY-----
 
 # Horizontal Pod Autoscaling
 autoscaling:

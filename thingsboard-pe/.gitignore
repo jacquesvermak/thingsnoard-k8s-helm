@@ -1,0 +1,33 @@
+# Helm chart gitignore
+
+# Security: Never commit real certificates or secrets
+values-production.yaml
+values-staging.yaml
+values-*.yaml
+!values-secure-example.yaml
+certs/
+*.pem
+*.key
+*.crt
+*.p12
+*.jks
+
+# Helm generated files
+charts/
+Chart.lock
+
+# Development files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
