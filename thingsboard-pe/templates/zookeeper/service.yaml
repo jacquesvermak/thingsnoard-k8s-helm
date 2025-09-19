@@ -1,0 +1,28 @@
+{{- if .Values.zookeeper.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "thingsboard-pe.fullname" . }}-zookeeper
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: zookeeper
+spec:
+  clusterIP: None
+  selector:
+    {{- include "thingsboard-pe.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: zookeeper
+  ports:
+  - port: 2181
+    targetPort: 2181
+    protocol: TCP
+    name: client
+  - port: 2888
+    targetPort: 2888
+    protocol: TCP
+    name: server
+  - port: 3888
+    targetPort: 3888
+    protocol: TCP
+    name: leader-election
+{{- end }}

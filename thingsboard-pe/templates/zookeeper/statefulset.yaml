@@ -1,0 +1,92 @@
+{{- if .Values.zookeeper.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "thingsboard-pe.fullname" . }}-zookeeper
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: zookeeper
+spec:
+  serviceName: {{ include "thingsboard-pe.fullname" . }}-zookeeper
+  replicas: {{ .Values.zookeeper.replicas }}
+  selector:
+    matchLabels:
+      {{- include "thingsboard-pe.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: zookeeper
+  template:
+    metadata:
+      labels:
+        {{- include "thingsboard-pe.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: zookeeper
+    spec:
+      containers:
+      - name: zookeeper
+        image: "{{ .Values.zookeeper.image.registry }}:{{ .Values.zookeeper.image.tag }}"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 2181
+          name: client
+        - containerPort: 2888
+          name: server
+        - containerPort: 3888
+          name: leader-election
+        env:
+        - name: ZOO_SERVER_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.annotations['statefulset.kubernetes.io/pod-name']
+        - name: ZOO_SERVERS
+          value: "{{ include "thingsboard-pe.fullname" . }}-zookeeper-0.{{ include "thingsboard-pe.fullname" . }}-zookeeper:2888:3888::1 {{ include "thingsboard-pe.fullname" . }}-zookeeper-1.{{ include "thingsboard-pe.fullname" . }}-zookeeper:2888:3888::2 {{ include "thingsboard-pe.fullname" . }}-zookeeper-2.{{ include "thingsboard-pe.fullname" . }}-zookeeper:2888:3888::3"
+        - name: ZOO_HEAP_SIZE
+          value: "1024"
+        - name: ZOO_TICK_TIME
+          value: "2000"
+        - name: ZOO_INIT_LIMIT
+          value: "10"
+        - name: ZOO_SYNC_LIMIT
+          value: "5"
+        - name: ZOO_MAX_CLIENT_CNXNS
+          value: "60"
+        - name: ZOO_AUTOPURGE_SNAP_RETAIN_COUNT
+          value: "3"
+        - name: ZOO_AUTOPURGE_PURGE_INTERVAL
+          value: "1"
+        volumeMounts:
+        - name: zookeeper-storage
+          mountPath: /bitnami/zookeeper
+        readinessProbe:
+          exec:
+            command:
+            - zkServer.sh
+            - status
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        livenessProbe:
+          exec:
+            command:
+            - zkServer.sh
+            - status
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+          {{- toYaml .Values.zookeeper.resources | nindent 10 }}
+      restartPolicy: Always
+  volumeClaimTemplates:
+  - metadata:
+      name: zookeeper-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.zookeeper.storage.storageClass }}
+      storageClassName: "{{ .Values.zookeeper.storage.storageClass }}"
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.zookeeper.storage.size }}
+{{- end }}

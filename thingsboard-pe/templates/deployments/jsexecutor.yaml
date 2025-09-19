@@ -1,0 +1,68 @@
+{{- if .Values.thingsboard.jsExecutor.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "thingsboard-pe.fullname" . }}-jsexecutor
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: jsexecutor
+spec:
+  replicas: {{ .Values.thingsboard.jsExecutor.replicas }}
+  selector:
+    matchLabels:
+      {{- include "thingsboard-pe.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: jsexecutor
+  template:
+    metadata:
+      labels:
+        {{- include "thingsboard-pe.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: jsexecutor
+    spec:
+      containers:
+      - name: jsexecutor
+        image: "{{ .Values.thingsboard.jsExecutor.image.registry }}:{{ .Values.thingsboard.jsExecutor.image.tag }}"
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: REMOTE_JS_EVAL_REQUEST_TOPIC
+          value: "js_eval.requests"
+        - name: TB_KAFKA_SERVERS
+          value: "{{ include "thingsboard-pe.fullname" . }}-kafka:9092"
+        - name: LOGGER_LEVEL
+          value: "info"
+        - name: LOG_FOLDER
+          value: "logs"
+        - name: LOGGER_FILENAME
+          value: "tb-js-executor-%DATE%.log"
+        - name: DOCKER_MODE
+          value: "true"
+        - name: SCRIPT_BODY_TRACE_FREQUENCY
+          value: "1000"
+        - name: NODE_OPTIONS
+          value: "--max-old-space-size=3584"
+        readinessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - "ps aux | grep '[n]ode' | grep 'server.js'"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - "ps aux | grep '[n]ode' | grep 'server.js'"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+          {{- toYaml .Values.thingsboard.jsExecutor.resources | nindent 10 }}
+      restartPolicy: Always
+{{- end }}

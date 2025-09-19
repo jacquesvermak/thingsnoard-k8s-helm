@@ -1,0 +1,69 @@
+{{- if .Values.thingsboard.webui.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "thingsboard-pe.fullname" . }}-web-ui
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: web-ui
+spec:
+  replicas: {{ .Values.thingsboard.webui.replicas }}
+  selector:
+    matchLabels:
+      {{- include "thingsboard-pe.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: web-ui
+  template:
+    metadata:
+      labels:
+        {{- include "thingsboard-pe.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: web-ui
+    spec:
+      containers:
+      - name: web-ui
+        image: "{{ .Values.thingsboard.webui.image.registry }}:{{ .Values.thingsboard.webui.image.tag }}"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+          {{- toYaml .Values.thingsboard.webui.resources | nindent 10 }}
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "thingsboard-pe.fullname" . }}-web-ui
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: web-ui
+spec:
+  type: {{ .Values.thingsboard.webui.service.type }}
+  selector:
+    {{- include "thingsboard-pe.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: web-ui
+  ports:
+  - port: {{ .Values.thingsboard.webui.service.port }}
+    targetPort: 8080
+    protocol: TCP
+    name: http
+{{- end }}

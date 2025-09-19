@@ -1,0 +1,38 @@
+{{- if .Values.cassandra.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "thingsboard-pe.fullname" . }}-cassandra
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cassandra
+spec:
+  selector:
+    {{- include "thingsboard-pe.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: cassandra
+  ports:
+  - port: 9042
+    targetPort: 9042
+    protocol: TCP
+    name: cql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "thingsboard-pe.fullname" . }}-cassandra-headless
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cassandra
+spec:
+  clusterIP: None
+  selector:
+    {{- include "thingsboard-pe.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: cassandra
+  ports:
+  - port: 9042
+    targetPort: 9042
+    protocol: TCP
+    name: cql
+{{- end }}

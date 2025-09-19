@@ -1,0 +1,24 @@
+{{- if .Values.kafka.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "thingsboard-pe.fullname" . }}-kafka
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: kafka
+spec:
+  clusterIP: None
+  selector:
+    {{- include "thingsboard-pe.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: kafka
+  ports:
+  - port: 9092
+    targetPort: 9092
+    protocol: TCP
+    name: kafka
+  - port: 9093
+    targetPort: 9093
+    protocol: TCP
+    name: kafka-internal
+{{- end }}

@@ -1,0 +1,37 @@
+{{- if .Values.redis.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "thingsboard-pe.fullname" . }}-redis-master
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis-master
+spec:
+  selector:
+    {{- include "thingsboard-pe.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: redis-master
+  ports:
+  - port: 6379
+    targetPort: 6379
+    protocol: TCP
+    name: redis
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "thingsboard-pe.fullname" . }}-redis-storage
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis-master
+spec:
+  accessModes:
+  - ReadWriteOnce
+  {{- if .Values.redis.storage.storageClass }}
+  storageClassName: "{{ .Values.redis.storage.storageClass }}"
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.redis.storage.size }}
+{{- end }}

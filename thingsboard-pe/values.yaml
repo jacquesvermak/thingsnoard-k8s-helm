@@ -34,7 +34,6 @@ thingsboard:
       TB_LICENSE_VALIDATION_ENABLED: "false"
       SWAGGER_ENABLED: "true"
       TB_KAFKA_SERVERS: "thingsboard-kafka:9092"
-      COAP_TRANSPORT_HOST: "thingsboard-coap.thingsboard-qa.svc.cluster.local"
       
   # Transport services
   transports:
@@ -59,39 +58,139 @@ thingsboard:
           memory: 8Gi
       env:
         TB_KAFKA_SERVERS: "thingsboard-kafka:9092"
-        COAP_TRANSPORT_HOST: "thingsboard-coap.thingsboard-qa.svc.cluster.local"
         COAP_TIMEOUT: "60000"
         TB_QUEUE_REQUEST_TIMEOUT: "120000"
+    
+    http:
+      enabled: true
+      replicas: 1
+      image:
+        registry: docker.io/thingsboard/tb-pe-http-transport
+        tag: "4.0.1PE"
+      port: 8080
+      service:
+        type: LoadBalancer
+        annotations:
+          service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+      resources:
+        limits:
+          cpu: 500m
+          memory: 4Gi
+        requests:
+          cpu: 500m
+          memory: 4Gi
+
+  # Web UI
+  webui:
+    enabled: true
+    replicas: 1
+    image:
+      registry: docker.io/thingsboard/tb-pe-web-ui
+      tag: "4.0.1PE"
+    service:
+      type: LoadBalancer
+      port: 8080
+    resources:
+      limits:
+        cpu: 500m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 2Gi
+
+  # JS Executor
+  jsExecutor:
+    enabled: true
+    replicas: 1
+    image:
+      registry: docker.io/thingsboard/tb-pe-js-executor
+      tag: "4.0.1PE"
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 4Gi
+      requests:
+        cpu: 1000m
+        memory: 4Gi
 
 # Database configuration
 cassandra:
   enabled: true
+  image:
+    registry: docker.io/bitnami/cassandra
+    tag: "4.0.11-debian-11-r10"
   cluster:
     name: cassandra
     datacenter: dc1
     rack: rack1
+    seeds: "thingsboard-cassandra-0.thingsboard-cassandra-headless"
+  resources:
+    limits:
+      memory: 32Gi
+    requests:
+      memory: 30Gi
+  storage:
+    size: 100Gi
+    storageClass: ""
 
 # Message queue configuration
 kafka:
   enabled: true
+  image:
+    registry: docker.io/bitnami/kafka
+    tag: "3.5.1-debian-11-r10"
   replicas: 3
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 8Gi
+    requests:
+      cpu: 1000m
+      memory: 4Gi
+  storage:
+    size: 50Gi
+    storageClass: ""
+  zookeeper:
+    servers: "thingsboard-zookeeper:2181"
 
 # Cache configuration
 redis:
   enabled: true
+  image:
+    registry: docker.io/bitnami/redis
+    tag: "7.2.1-debian-11-r12"
+  auth:
+    enabled: true
+    password: "setplease"
+  master:
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 4Gi
+      requests:
+        cpu: 500m
+        memory: 2Gi
+  storage:
+    size: 20Gi
+    storageClass: ""
 
 # Zookeeper configuration
 zookeeper:
   enabled: true
+  image:
+    registry: docker.io/bitnami/zookeeper
+    tag: "3.9.0-debian-11-r18"
   replicas: 3
-
-# Web UI configuration
-webui:
-  enabled: true
-  replicas: 1
-  service:
-    type: LoadBalancer
-    port: 8080
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 2Gi
+  storage:
+    size: 20Gi
+    storageClass: ""
 
 # Security
 security:
@@ -121,3 +220,15 @@ security:
         AwEHoUQDQgAEx2AAdzVjgug49nnHR6LKljHa95loqlAqrt2Ne3qtk5QPu7flgxOQ
         O0n/s5ur5PFBHlznYSWPrm77NbTKsA1TzQ==
         -----END EC PRIVATE KEY-----
+
+# Horizontal Pod Autoscaling
+autoscaling:
+  enabled: true
+  coap:
+    minReplicas: 4
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+  http:
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80

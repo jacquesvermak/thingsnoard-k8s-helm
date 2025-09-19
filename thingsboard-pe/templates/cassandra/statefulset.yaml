@@ -1,0 +1,95 @@
+{{- if .Values.cassandra.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "thingsboard-pe.fullname" . }}-cassandra
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cassandra
+spec:
+  serviceName: {{ include "thingsboard-pe.fullname" . }}-cassandra-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "thingsboard-pe.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: cassandra
+  template:
+    metadata:
+      labels:
+        {{- include "thingsboard-pe.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: cassandra
+    spec:
+      containers:
+      - name: cassandra
+        image: "{{ .Values.cassandra.image.registry }}:{{ .Values.cassandra.image.tag }}"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9042
+          name: cql
+        - containerPort: 7000
+          name: intra-node
+        - containerPort: 7001
+          name: tls-intra-node
+        - containerPort: 7199
+          name: jmx
+        env:
+        - name: CASSANDRA_CLUSTER_NAME
+          value: "{{ .Values.cassandra.cluster.name }}"
+        - name: CASSANDRA_DC
+          value: "{{ .Values.cassandra.cluster.datacenter }}"
+        - name: CASSANDRA_RACK
+          value: "{{ .Values.cassandra.cluster.rack }}"
+        - name: CASSANDRA_SEEDS
+          value: "{{ .Values.cassandra.cluster.seeds }}"
+        - name: CASSANDRA_ENDPOINT_SNITCH
+          value: "GossipingPropertyFileSnitch"
+        - name: CASSANDRA_NUM_TOKENS
+          value: "256"
+        - name: CASSANDRA_START_RPC
+          value: "false"
+        - name: CASSANDRA_AUTO_BOOTSTRAP
+          value: "false"
+        - name: MAX_HEAP_SIZE
+          value: "24G"
+        - name: HEAP_NEWSIZE
+          value: "2G"
+        volumeMounts:
+        - name: cassandra-storage
+          mountPath: /bitnami/cassandra
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - 'if [[ $(nodetool status | grep $POD_IP) == *"UN"* ]]; then exit 0; else exit 1; fi'
+          initialDelaySeconds: 90
+          periodSeconds: 30
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        livenessProbe:
+          exec:
+            command:
+            - nodetool
+            - status
+          initialDelaySeconds: 120
+          periodSeconds: 30
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        resources:
+          {{- toYaml .Values.cassandra.resources | nindent 10 }}
+      restartPolicy: Always
+  volumeClaimTemplates:
+  - metadata:
+      name: cassandra-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.cassandra.storage.storageClass }}
+      storageClassName: "{{ .Values.cassandra.storage.storageClass }}"
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.cassandra.storage.size }}
+{{- end }}
