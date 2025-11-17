@@ -260,6 +260,7 @@ zookeeper:
   storage:
     size: 20Gi
     storageClass: ""
+## TEST CHANGE: Trigger GitHub Actions Harbor push
 # HTTP Transport configuration
 webui:
   replicaCount: 1
