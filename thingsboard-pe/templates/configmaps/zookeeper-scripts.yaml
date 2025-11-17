@@ -1,0 +1,18 @@
+{{- if .Values.zookeeper.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: thingsboard-zookeeper-scripts
+  namespace: {{ include "thingsboard-pe.namespace" . }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+data:
+  setup.sh: |
+    #!/bin/bash
+    HOSTNAME="$(hostname -s)"
+    if [[ $HOSTNAME =~ (.*)-([0-9]+)$ ]]; then
+      ORD=${BASH_REMATCH[2]}
+      export ZOOKEEPER_SERVER_ID="$ORD"
+    fi
+    exec /etc/confluent/docker/run
+{{- end }}

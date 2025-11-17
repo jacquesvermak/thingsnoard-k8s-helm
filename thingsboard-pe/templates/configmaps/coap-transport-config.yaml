@@ -1,0 +1,69 @@
+{{- if .Values.thingsboard.transports.coap.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: thingsboard-coap-transport-config
+  namespace: {{ include "thingsboard-pe.namespace" . }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    name: thingsboard-coap-transport-config
+data:
+  conf: |
+    export JAVA_OPTS="$JAVA_OPTS -Dplatform=deb -Dinstall.data_dir=/usr/share/thingsboard/data"
+    export JAVA_OPTS="$JAVA_OPTS -Xlog:gc*,heap*,age*,safepoint=debug:file=/var/log/tb/${TB_SERVICE_ID}-gc.log:time,uptime,level,tags:filecount=5,filesize=10M"
+    export JAVA_OPTS="$JAVA_OPTS -XX:+IgnoreUnrecognizedVMOptions -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/log/tb/heapdump.hprof"
+    export JAVA_OPTS="$JAVA_OPTS -XX:-UseBiasedLocking -XX:+UseTLAB -XX:+ResizeTLAB -XX:+PerfDisableSharedMem -XX:+UseCondCardMark"
+    export JAVA_OPTS="$JAVA_OPTS -XX:+ExitOnOutOfMemoryError -XX:+UseContainerSupport"
+    export JAVA_OPTS="$JAVA_OPTS -Xms2G -Xmx4G"
+    export JAVA_OPTS="$JAVA_OPTS -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=40"
+    export LOG_FILENAME=thingsboard.out
+    export LOADER_PATH=/usr/share/thingsboard/conf,/usr/share/thingsboard/extensions
+
+    # Service Configuration
+    export TB_SERVICE_TYPE=tb-transport
+    export TB_QUEUE_TYPE=kafka
+
+    # Metrics Configuration
+    export METRICS_ENABLED=true
+    export METRICS_ENDPOINTS_EXPOSE=prometheus
+    export WEB_APPLICATION_ENABLE=true
+    export WEB_APPLICATION_TYPE=servlet
+    export HTTP_BIND_PORT=8082
+
+    # Kafka Configuration
+    export TB_KAFKA_SERVERS={{ .Values.kafka.serviceName }}.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local:9092
+    export TB_QUEUE_KAFKA_REPLICATION_FACTOR=1
+    export TB_QUEUE_KAFKA_MAX_POLL_INTERVAL_MS=300000
+    export TB_QUEUE_REQUEST_TIMEOUT=60000
+    export COAP_TIMEOUT={{ .Values.thingsboard.transports.coap.env.COAP_TIMEOUT }}
+
+    # Zookeeper
+    export ZOOKEEPER_ENABLED=true
+    export ZOOKEEPER_URL={{ .Values.zookeeper.serviceName }}.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local:2181
+
+    # CoAP DTLS Configuration
+    {{- if .Values.thingsboard.transports.coap.dtlsEnabled }}
+    export COAP_DTLS_ENABLED=true
+    export COAP_DTLS_BIND_ADDRESS=0.0.0.0
+    export COAP_DTLS_BIND_PORT={{ .Values.thingsboard.transports.coap.port }}
+    export COAP_DTLS_CREDENTIALS_TYPE=PEM
+    export COAP_DTLS_PEM_CERT=/https-config/server.pem
+    export COAP_DTLS_PEM_KEY=/https-config/server_key.pem
+    export COAP_DTLS_MAX_CONNECTIONS=40000
+    {{- end }}
+
+  logback: |
+    <!DOCTYPE configuration>
+    <configuration scan="true" scanPeriod="10 seconds">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{ISO8601} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+        <logger name="org.thingsboard.server" level="INFO" />
+        <logger name="org.thingsboard.server.transport.coap" level="DEBUG" />
+    </configuration>
+{{- end }}

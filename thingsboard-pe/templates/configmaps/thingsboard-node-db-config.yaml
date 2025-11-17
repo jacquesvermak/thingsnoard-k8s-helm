@@ -1,0 +1,40 @@
+{{- if .Values.thingsboard.node.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: thingsboard-node-db-config
+  namespace: {{ include "thingsboard-pe.namespace" . }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    name: thingsboard-node-db-config
+data:
+  # PostgreSQL / Aurora Database
+  SPRING_DATASOURCE_URL: {{ .Values.database.url | quote }}
+  SPRING_DATASOURCE_USERNAME: {{ .Values.database.username | quote }}
+  SPRING_DATASOURCE_PASSWORD: {{ .Values.database.password | quote }}
+  SPRING_DRIVER_CLASS_NAME: "org.postgresql.Driver"
+  SPRING_JPA_DATABASE_PLATFORM: "org.hibernate.dialect.PostgreSQLDialect"
+  SPRING_DATASOURCE_MAXIMUM_POOL_SIZE: "40"
+  
+  # Cassandra (for time-series data)
+  {{- if .Values.cassandra.enabled }}
+  CASSANDRA_URL: "cassandra.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local:9042"
+  CASSANDRA_USERNAME: {{ .Values.cassandra.username | default "cassandra" | quote }}
+  CASSANDRA_PASSWORD: {{ .Values.cassandra.password | default "cassandra" | quote }}
+  CASSANDRA_USE_CREDENTIALS: "true"
+  DATABASE_TS_TYPE: "cassandra"
+  DATABASE_TS_LATEST_TYPE: "cassandra"
+  {{- end }}
+  
+  # Kafka Queue
+  TB_QUEUE_KAFKA_BOOTSTRAP_SERVERS: "{{ .Values.kafka.serviceName }}.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local:9092"
+  
+  # Queue Configuration
+  TB_QUEUE_RE_MAIN_CONSUMER_THREADS: "8"
+  TB_QUEUE_RE_MAIN_PROCESSING_THREADS: "16"
+  TB_QUEUE_CORE_CONSUMER_THREADS: "32"
+  
+  # Actor System
+  TB_ACTORS_TENANT_CREATE_COMPONENTS_ON_INIT: "false"
+  ACTORS_TENANT_CREATE_COMPONENTS_ON_INIT: "false"
+{{- end }}

@@ -1,0 +1,15 @@
+{{- if .Values.kafka.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: thingsboard-kafka-scripts
+  namespace: {{ include "thingsboard-pe.namespace" . }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+data:
+  setup.sh: |
+    #!/bin/bash
+    ID="${MY_POD_NAME#"kafka-"}"
+    export KAFKA_BROKER_ID="$((ID + 0))"
+    exec kafka-server-start.sh /etc/kafka/server.properties
+{{- end }}

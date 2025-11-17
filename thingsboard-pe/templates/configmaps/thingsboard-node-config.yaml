@@ -1,0 +1,18 @@
+{{- if .Values.redis.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: thingsboard-redis-configuration
+  namespace: {{ include "thingsboard-pe.namespace" . }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+data:
+  redis.conf: |
+    appendonly yes
+    save ""
+    auto-aof-rewrite-percentage 100
+    auto-aof-rewrite-min-size 32mb
+    maxmemory 8gb
+    maxmemory-policy allkeys-lru
+    tcp-keepalive 60
+{{- end }}

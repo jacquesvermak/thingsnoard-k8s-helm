@@ -1,0 +1,67 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tb-ingress
+  namespace: {{ .Values.global.namespace }}
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.ingress.host }}
+    kubernetes.io/ingress.class: {{ .Values.ingress.className }}
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/enable-cors: 'true'
+    nginx.ingress.kubernetes.io/proxy-body-size: 200m
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '3600'
+    nginx.ingress.kubernetes.io/proxy-send-timeout: '3600'
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host }}
+      secretName: {{ .Values.ingress.tlsSecret }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: thingsboard-node
+                port:
+                  number: 8080
+          - path: /api/ws
+            pathType: Prefix
+            backend:
+              service:
+                name: thingsboard-node
+                port:
+                  number: 8080
+          - path: /static(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: thingsboard-webui
+                port:
+                  number: 8084
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: thingsboard-webui
+                port:
+                  number: 8084
+          - path: /swagger-ui(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: thingsboard-node
+                port:
+                  number: 8080
+          - path: /v3/api-docs
+            pathType: Exact
+            backend:
+              service:
+                name: thingsboard-node
+                port:
+                  number: 8080

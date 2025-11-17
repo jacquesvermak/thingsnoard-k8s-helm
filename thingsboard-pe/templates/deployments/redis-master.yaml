@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+	name: thingsboard-redis-master
+	namespace: {{ .Values.global.namespace }}
+	labels:
+		app.kubernetes.io/component: master
+		app.kubernetes.io/instance: thingsboard
+		app.kubernetes.io/managed-by: Helm
+		app.kubernetes.io/name: redis
+		app.kubernetes.io/version: {{ .Values.redis.image.tag }}
+spec:
+	replicas: {{ .Values.redis.master.replicas | default 3 }}
+	selector:
+		matchLabels:
+			app.kubernetes.io/component: master
+			app.kubernetes.io/instance: thingsboard
+			app.kubernetes.io/name: redis
+	template:
+		metadata:
+			labels:
+				app.kubernetes.io/component: master
+				app.kubernetes.io/instance: thingsboard
+				app.kubernetes.io/managed-by: Helm
+				app.kubernetes.io/name: redis
+				app.kubernetes.io/version: {{ .Values.redis.image.tag }}
+		spec:
+			imagePullSecrets:
+				- name: harbor-redis-pull-secret
+			containers:
+				- name: redis
+					image: {{ .Values.redis.image.registry }}:{{ .Values.redis.image.tag }}
+					command: ["redis-server"]
+					args: ["/etc/redis/redis.conf"]
+					ports:
+						- name: redis
+							containerPort: 6379
+							protocol: TCP
+					env:
+						- name: REDIS_PASSWORD
+							value: {{ .Values.redis.auth.password | quote }}
+						- name: REDIS_PORT
+							value: "6379"
+					resources:
+						limits:
+							cpu: {{ .Values.redis.master.resources.limits.cpu }}
+							memory: {{ .Values.redis.master.resources.limits.memory }}
+						requests:
+							cpu: {{ .Values.redis.master.resources.requests.cpu }}
+							memory: {{ .Values.redis.master.resources.requests.memory }}
+					volumeMounts:
+						- name: config
+							mountPath: /etc/redis
+						- name: redis-data
+							mountPath: /data
+					imagePullPolicy: IfNotPresent
+					securityContext:
+						runAsUser: 1001
+			restartPolicy: Always
+			terminationGracePeriodSeconds: 30
+			dnsPolicy: ClusterFirst
+			serviceAccountName: thingsboard-redis
+			serviceAccount: thingsboard-redis
+			securityContext:
+				fsGroup: 1001

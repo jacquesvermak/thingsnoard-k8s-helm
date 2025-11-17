@@ -1,0 +1,32 @@
+{{- if .Values.thingsboard.transports.http.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: thingsboard-http-transport-config
+  namespace: {{ include "thingsboard-pe.namespace" . }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+data:
+  conf: |
+    export JAVA_OPTS="$JAVA_OPTS -Xlog:gc*,heap*,age*,safepoint=debug:file=/var/log/tb-http-transport/${TB_SERVICE_ID}-gc.log:time,uptime,level,tags:filecount=10,filesize=10M"
+    export JAVA_OPTS="$JAVA_OPTS -XX:+IgnoreUnrecognizedVMOptions -XX:+HeapDumpOnOutOfMemoryError"
+    export JAVA_OPTS="$JAVA_OPTS -XX:+UseG1GC -XX:+UseContainerSupport -XX:MaxRAMPercentage=80"
+    export LOG_FILENAME=tb-http-transport.out
+    export LOADER_PATH=/usr/share/tb-http-transport/conf
+    
+    export TB_KAFKA_SERVERS={{ .Values.kafka.serviceName }}.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local:9092
+    export TB_QUEUE_TYPE=kafka
+  
+  logback: |
+    <!DOCTYPE configuration>
+    <configuration scan="true" scanPeriod="10 seconds">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{ISO8601} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </configuration>
+{{- end }}
