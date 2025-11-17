@@ -34,8 +34,7 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Login to Harbor
-        run: |
-          echo ${{ secrets.HARBOR_PASSWORD }} | helm registry login ${{ env.HARBOR_URL }} --username ${{ secrets.HARBOR_USERNAME }} --password-stdin
+        run: echo "${{ secrets.HARBOR_PASSWORD }}" | helm registry login ${{ env.HARBOR_URL }} --username ${{ secrets.HARBOR_USERNAME }} --password-stdin
 
       - name: Package Helm chart
         run: |
