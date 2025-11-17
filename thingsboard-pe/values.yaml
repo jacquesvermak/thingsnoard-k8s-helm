@@ -1,3 +1,44 @@
+# HTTP Transport configuration
+http:
+  replicaCount: 1
+  image:
+    repository: docker.io/thingsboard/tb-pe-http-transport
+    tag: "4.0.1PE"
+  port: 8082
+  serviceId: tb-http-transport
+  queueType: kafka
+  bindAddress: "0.0.0.0"
+  bindPort: 8082
+  requestTimeout: 10000
+  kafkaServers: thingsboard-kafka:9092
+  kafkaReplicationFactor: 1
+  kafkaPartitions: 10
+  nettyBossThreads: 2
+  nettyWorkerThreads: 16
+  nettyMaxPayloadSize: 131072
+  nettySoKeepAlive: true
+  maxRequestTimeout: 90000
+  coreShutdownWaitTimeMs: 90000
+  shutdownTimeoutMs: 90000
+  transportMaxPendingRequests: 100000
+  kafkaMaxPollRecords: 3000
+  kafkaMaxPollIntervalMs: 420000
+  kafkaConsumerThreads: 15
+  kafkaBatchSize: 1572864
+  kafkaLingerMs: 15
+  kafkaBufferMemory: 134217728
+  kafkaRequestTimeoutMs: 90000
+  transportConsumerThreads: 50
+  transportNotificationsConsumerThreads: 15
+  coreThreads: 80
+  queueStatsEnabled: true
+  resources:
+    limits:
+      cpu: "2"
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 2Gi
 # Global configuration
 global:
   namespace: thingsboard-qa
