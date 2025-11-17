@@ -41,7 +41,7 @@ spec:
             fieldRef:
               fieldPath: metadata.name
         - name: TB_LICENSE_SECRET
-          value: {{ .Values.thingsboard.node.env.TB_LICENSE_SECRET | quote }}
+          value: {{ .Values.global.tbLicenseSecret | quote }}
         - name: TB_LICENSE_VALIDATION_ENABLED
           value: {{ .Values.thingsboard.node.env.TB_LICENSE_VALIDATION_ENABLED | quote }}
         - name: SWAGGER_ENABLED

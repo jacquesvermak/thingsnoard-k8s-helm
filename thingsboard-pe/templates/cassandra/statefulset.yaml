@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+	name: cassandra
+spec:
+	selector:
+		matchLabels:
+			app: cassandra
+	serviceName: cassandra
+	replicas: 1
+	template:
+		metadata:
+			labels:
+				app: cassandra
+		spec:
+			imagePullSecrets:
+				- name: harbor-cassandra-pull-secret
+			containers:
+				- name: cassandra
+					image: harbor.qa.stagezero.co.za/cassandra/cassandra:5.0.6
+					ports:
+						- containerPort: 9042

@@ -3,6 +3,7 @@ global:
   namespace: thingsboard-qa
   imageRegistry: ""
   imagePullSecrets: []
+  tbLicenseSecret: "biGeBHrEO4LaxCqPQa9imyFL"
 
 # ThingsBoard configuration
 thingsboard:
@@ -30,7 +31,6 @@ thingsboard:
       
     # Environment variables
     env:
-      TB_LICENSE_SECRET: "biGeBHrEO4LaxCqPQa9imyFL"
       TB_LICENSE_VALIDATION_ENABLED: "false"
       SWAGGER_ENABLED: "true"
       TB_KAFKA_SERVERS: "thingsboard-kafka:9092"
