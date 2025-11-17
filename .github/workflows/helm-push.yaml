@@ -1,3 +1,4 @@
+
 name: Helm Chart Package & Push to Harbor
 
 on:
@@ -42,4 +43,4 @@ jobs:
 
       - name: Push chart to Harbor
         run: |
-          helm push thingsboard-pe-${{ steps.chartver.outputs.version }}.tgz oci://${{ env.HARBOR_URL }}/${{ env.HARBOR_PROJECT }}/
+          helm push thingsboard-pe-${{ steps.chartver.outputs.version }}.tgz oci://${{ env.HARBOR_URL }}/${{ env.HARBOR_PROJECT }}/ --ca-file harbor-ca.crt
