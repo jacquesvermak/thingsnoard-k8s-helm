@@ -105,20 +105,26 @@ thingsboard:
   # Web UI
   webui:
     enabled: true
-    replicas: 1
+    replicaCount: 1
     image:
-      registry: docker.io/thingsboard/tb-pe-web-ui
+      repository: docker.io/thingsboard/tb-pe-web-ui
       tag: "4.0.1PE"
-    service:
-      type: LoadBalancer
-      port: 8080
+    serviceType: web
+    bindAddress: "0.0.0.0"
+    bindPort: 8084
+    enableProxy: false
+    tbHost: "thingsboard-node"
+    tbPort: 8080
+    loggerLevel: info
+    logFolder: logs
+    loggerFilename: tb-web-ui-%DATE%.log
+    dockerMode: true
+    swaggerEnabled: true
     resources:
       limits:
-        cpu: 500m
         memory: 2Gi
       requests:
-        cpu: 500m
-        memory: 2Gi
+        memory: 1Gi
 
   # JS Executor
   jsExecutor:
@@ -188,6 +194,10 @@ kafka:
 # Cache configuration
 redis:
   enabled: true
+  headlessServiceName: "thingsboard-redis-headless"
+  masterServiceName: "thingsboard-redis-master"
+  port: 6379
+  version: "6.2.6"
   serviceName: "redis-master"
   image:
     registry: harbor.qa.stagezero.co.za/redis/redis
@@ -204,6 +214,31 @@ redis:
         cpu: 500m
         memory: 2Gi
   storage:
+  config:
+    masterConf: |
+      dir /data
+      # User-supplied master configuration:
+      rename-command FLUSHALL ""
+      # End of master configuration
+    redisConf: |
+      # User-supplied common configuration:
+      # Enable AOF https://redis.io/topics/persistence#append-only-file
+      appendonly yes
+      # Disable RDB persistence, AOF persistence already enabled.
+      save ""
+      # End of common configuration
+      auto-aof-rewrite-percentage 100
+      auto-aof-rewrite-min-size 32mb
+      maxmemory 8gb
+      maxmemory-policy allkeys-lru
+      tcp-keepalive 60
+    replicaConf: |
+      dir /data
+      slave-read-only yes
+      # User-supplied replica configuration:
+      rename-command FLUSHDB ""
+      rename-command FLUSHALL ""
+      # End of replica configuration
     size: 20Gi
     storageClass: ""
 

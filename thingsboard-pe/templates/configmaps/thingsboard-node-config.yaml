@@ -1,18 +1,374 @@
-{{- if .Values.redis.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: thingsboard-redis-configuration
-  namespace: {{ include "thingsboard-pe.namespace" . }}
+  name: thingsboard-node-config
+  namespace: {{ .Values.namespace }}
   labels:
-    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: thingsboard
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+spec: {}
 data:
-  redis.conf: |
-    appendonly yes
-    save ""
-    auto-aof-rewrite-percentage 100
-    auto-aof-rewrite-min-size 32mb
-    maxmemory 8gb
-    maxmemory-policy allkeys-lru
-    tcp-keepalive 60
-{{- end }}
+  conf: |-
+    # Java Options
+
+        export JAVA_OPTS="$JAVA_OPTS -Dplatform=deb
+        -Dinstall.data_dir=/usr/share/thingsboard/data"
+
+        export JAVA_OPTS="$JAVA_OPTS
+        -Xlog:gc*,heap*,age*,safepoint=debug:file=/var/log/thingsboard/${TB_SERVICE_ID}-gc.log:time,uptime,level,tags:filecount=10,filesize=10M"
+
+        export JAVA_OPTS="$JAVA_OPTS -XX:+IgnoreUnrecognizedVMOptions
+        -XX:+HeapDumpOnOutOfMemoryError
+        -XX:HeapDumpPath=/var/log/thingsboard/heapdump.hprof"
+
+        export JAVA_OPTS="$JAVA_OPTS -XX:-UseBiasedLocking -XX:+UseTLAB
+        -XX:+ResizeTLAB -XX:+PerfDisableSharedMem -XX:+UseCondCardMark"
+
+        export JAVA_OPTS="$JAVA_OPTS -XX:+ExitOnOutOfMemoryError
+        -XX:+UseContainerSupport -XX:MaxRAMPercentage=80"
+
+        export JAVA_OPTS="$JAVA_OPTS -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+        -XX:InitiatingHeapOccupancyPercent=45 -XX:ConcGCThreads=4
+        -XX:ParallelGCThreads=8"
+
+        export JAVA_OPTS="$JAVA_OPTS -XX:+UnlockExperimentalVMOptions
+        -XX:+UseStringDeduplication -XX:+OptimizeStringConcat"
+
+        export JAVA_OPTS="$JAVA_OPTS -XX:MaxMetaspaceSize=512m
+        -XX:CompressedClassSpaceSize=256m"
+
+
+        export LOG_FILENAME=thingsboard.out
+
+        export
+        LOADER_PATH=/usr/share/thingsboard/conf,/usr/share/thingsboard/extensions
+
+
+        # Service & Metrics
+
+        export TB_SERVICE_TYPE=monolith
+
+        export METRICS_ENABLED=true
+
+        export METRICS_EXPORT_PROMETHEUS_ENABLED=true
+
+        export METRICS_EXPORT_PROMETHEUS_ENDPOINT=/actuator/prometheus
+
+        export METRICS_EXPORT_PROMETHEUS_GC_METRICS_ENABLED=true
+
+        export METRICS_EXPORT_PROMETHEUS_JVM_METRICS_ENABLED=true
+
+        export METRICS_EXPORT_PROMETHEUS_SYSTEM_METRICS_ENABLED=true
+
+        export MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=prometheus,health,info
+
+        export MANAGEMENT_ENDPOINTS_WEB_BASE_PATH=/actuator
+
+        export MANAGEMENT_SERVER_PORT=8080
+
+
+        # Kafka / Queue
+
+        export TB_QUEUE_TYPE=kafka
+
+        export TB_QUEUE_KAFKA_PARTITIONS=10
+
+        export TB_QUEUE_KAFKA_REPLICATION_FACTOR=1
+
+        export TB_QUEUE_KAFKA_MAX_POLL_RECORDS=2000
+
+        export TB_QUEUE_KAFKA_MAX_POLL_INTERVAL_MS=300000
+
+        export TB_QUEUE_KAFKA_CONSUMER_THREADS=10
+
+        export TB_QUEUE_KAFKA_BATCH_SIZE=1048576      # cleaned duplicate, last
+        value kept
+
+        export TB_QUEUE_KAFKA_LINGER_MS=10
+
+        export TB_QUEUE_KAFKA_FETCH_MIN_BYTES=131072
+
+        export TB_QUEUE_KAFKA_FETCH_MAX_WAIT_MS=52428800
+
+        export TB_QUEUE_KAFKA_BUFFER_MEMORY=67108864
+
+        export TB_QUEUE_KAFKA_ACKS=1
+
+        export TB_QUEUE_KAFKA_RETRIES=10
+
+        export TB_QUEUE_KAFKA_REQUEST_TIMEOUT_MS=60000
+
+
+        # Zookeeper & JS
+
+        export ZOOKEEPER_ENABLED=true
+
+        export ZOOKEEPER_URL=thingsboard-zookeeper-0.thingsboard-zookeeper-headless.thingsboard-qa.svc.cluster.local:2181
+
+        export TB_KAFKA_SERVERS=thingsboard-kafka:9092
+
+        export JS_EVALUATOR=remote
+
+        export TRANSPORT_TYPE=remote
+
+
+        # HTTP & Cache
+
+        export HTTP_LOG_CONTROLLER_ERROR_STACK_TRACE=false
+
+        export CACHE_TYPE=redis
+
+        export REDIS_TIMEOUT=10000
+
+        export REDIS_HOST=thingsboard-redis-master
+
+        export REDIS_PASSWORD=setplease
+
+
+        # JWT & Timeouts
+
+        export JWT_TOKEN_EXPIRATION_TIME=9000
+
+        export JWT_REFRESH_TOKEN_EXPIRATION_TIME=604800
+
+        export DEFAULT_INACTIVITY_TIMEOUT=600
+
+        export DEFAULT_STATE_CHECK_INTERVAL=60
+
+        export DD_SERVICE_MAPPING=postgresql:thingsboard-postgres
+
+
+        # License Configuration
+
+        export TB_LICENSE_SERVER_URL=https://license.thingsboard.io
+
+        export TB_LICENSE_INSTANCE_DATA_FILE=/data/license.data
+
+        export TB_LICENSE_CHECK_INTERVAL_MS=60000
+
+        export TB_LICENSE_RETRY_INTERVAL_MS=10000
+
+        export TB_LICENSE_VALIDATION_ENABLED=true
+
+        export TB_LICENSE_VALIDATION_RETRY_COUNT=10
+
+        export TB_LICENSE_VALIDATION_RETRY_DELAY_MS=30000
+
+        export TB_LICENSE_CONNECTION_TIMEOUT_MS=30000
+
+        export TB_LICENSE_READ_TIMEOUT_MS=60000
+
+        export TB_LICENSE_VALIDATION_ON_STARTUP=false
+
+        export TB_LICENSE_SKIP_VALIDATION_ON_STARTUP_FAILURE=true
+
+
+        # Database
+
+        export SPRING_DATASOURCE_USERNAME=postgres
+
+        export SPRING_DATASOURCE_PASSWORD=VF8sjO1yR68W1LxPzwoh
+
+        export
+        SPRING_DATASOURCE_URL=jdbc:postgresql://thingsboard-db-qa-k8s.cdhob2fjfmcq.af-south-1.rds.amazonaws.com:5432/thingsboard
+
+        export SPRING_DATASOURCE_MAXIMUM_POOL_SIZE=40
+
+        export SPRING_DATASOURCE_CONNECTION_TIMEOUT=60000
+
+        export SPRING_DATASOURCE_LEAK_DETECTION_THRESHOLD=60000
+
+        export SPRING_DATASOURCE_IDLE_TIMEOUT=300000
+
+        export SPRING_DATASOURCE_MAX_LIFETIME=1800000
+
+        export SPRING_DATASOURCE_MINIMUM_IDLE=10
+
+        export SPRING_DATASOURCE_VALIDATION_TIMEOUT=5000
+
+
+        # Memory
+
+        export MAX_HEAP_SIZE=24G
+
+        export HEAP_NEWSIZE=2400M
+
+
+        # Actor System
+
+        export TB_ACTORS_TENANT_MAX_TENANT_MSGS_PER_INTERVAL=3000000
+
+        export TB_ACTORS_TENANT_MAX_TENANT_MAILBOX_SIZE=1500000
+
+        export TB_RULE_ENGINE_THREAD_POOL_SIZE=96
+
+        export TB_ACTORS_TENANT_CREATE_COMPONENTS_ON_INIT=false
+
+        export TB_ACTORS_TENANT_TENANT_MSG_INTERVAL_MS=1000
+
+        export TB_ACTORS_SYSTEM_THROUGHPUT=5
+
+        export TB_ACTORS_SYSTEM_MAX_ACTOR_INIT_ATTEMPTS=10
+
+
+        # Rule Engine
+
+        export TB_QUEUE_RULE_ENGINE_THREADS=72
+
+        export TB_QUEUE_CORE_RE_SUBMIT_TIMEOUT_MS=30000
+
+        export TB_QUEUE_RULE_ENGINE_MAIN_CONSUMERS_COUNT=15
+
+        export TB_QUEUE_RULE_ENGINE_HP_CONSUMERS_COUNT=10
+
+        export TB_QUEUE_RULE_ENGINE_SQ_CONSUMERS_COUNT=10
+
+        export TB_QUEUE_RULE_ENGINE_POLL_INTERVAL_MS=25
+
+        export TB_QUEUE_RULE_ENGINE_MAIN_BATCH_SIZE=500
+
+        export TB_QUEUE_RULE_ENGINE_MAIN_THREADS=60
+
+        export TB_QUEUE_RULE_ENGINE_MAIN_PACK_PROCESSING_TIMEOUT_MS=30000
+
+
+        # Transport & Stats
+
+        export TB_QUEUE_STATS_ENABLED=false
+
+        export TB_QUEUE_TRANSPORT_REQUEST_TIMEOUT=120000
+
+        export TB_QUEUE_TRANSPORT_MAX_PENDING_REQUESTS=50000
+
+        export COAP_DTLS_BIND_PORT=5684
+
+        export TB_TRANSPORT_SESSIONS_INACTIVITY_TIMEOUT=900000
+
+        export TB_TRANSPORT_SESSIONS_REPORT_TIMEOUT=30000
+
+        export TB_TRANSPORT_RATE_LIMITS_ENABLED=false
+
+
+        # Cassandra / Time Series
+
+        export DATABASE_TS_MAX_QUERIES_QUEUE_SIZE=100000
+
+        export DATABASE_TS_QUERY_BUFFER_SIZE=100000
+
+        export DATABASE_TS_MAX_QUERY_TIMEOUT=120000
+
+        export CASSANDRA_QUERY_BUFFER_SIZE=200000
+
+        export CASSANDRA_QUERY_CONCURRENT_LIMIT=1000
+
+        export CASSANDRA_QUERY_DISPATCHER_THREADS=16
+
+        export CASSANDRA_QUERY_DEFAULT_FETCH_SIZE=2000
+
+        export CASSANDRA_QUERY_DEFAULT_CONSISTENCY_LEVEL=ONE
+
+        export CASSANDRA_REQUEST_TIMEOUT=120000
+
+        export CASSANDRA_READ_TIMEOUT=120000
+
+        export CASSANDRA_CONNECTION_TIMEOUT=10000
+
+        export TS_BATCH_SIZE=25000
+
+        export TS_BATCH_MAX_DELAY=50
+
+        export TS_BATCH_THREADS=20
+
+
+        # Kafka Topics Partitions
+
+        export TB_KAFKA_PARTITIONS_RULE_ENGINE=20
+
+        export TB_KAFKA_PARTITIONS_CORE=20
+
+        export TB_KAFKA_PARTITIONS_TRANSPORT_API=20
+
+        export TB_KAFKA_PARTITIONS_JS_EXECUTOR=20
+
+        export TB_KAFKA_PARTITIONS_HP=10
+
+        export TB_KAFKA_PARTITIONS_SQ=10
+
+        export TB_KAFKA_PARTITIONS_BATCH=10
+
+        export TB_KAFKA_PARTITIONS_INTERNALLY_LAUNCHED=10
+
+        export TB_KAFKA_PARTITIONS_SOLID_API=10
+
+        export TB_KAFKA_PARTITIONS_SOLID_API_NO_RETRY=10
+
+        export TB_KAFKA_PARTITIONS_SEQUENTIAL_BY_TENANT=10
+
+        export TB_KAFKA_PARTITIONS_CF_EVENT=10
+
+        export TB_KAFKA_PARTITIONS_CF_STATE=10
+
+        export TB_KAFKA_PARTITIONS_USAGE_STATS=10
+
+        export TB_KAFKA_PARTITIONS_VERSION_CONTROL=10
+
+        export TB_KAFKA_PARTITIONS_IE_UPLINK=10
+
+        export TB_KAFKA_PARTITIONS_EDGE=20
+
+
+        # HTTP server tuning
+
+        export SERVER_TOMCAT_MAX_CONNECTIONS=4000
+
+        export SERVER_TOMCAT_ACCEPT_COUNT=1000
+
+        export SERVER_TOMCAT_MAX_THREADS=200
+
+
+        # Monitoring / Metrics
+
+        export TB_SERVICE_PROMETHEUS_STATS_ENABLED=true
+
+        export PROMETHEUS_ENABLED=true
+
+        export TB_METRICS_STATS_ENABLED=true
+  logback: |
+    <!DOCTYPE configuration>
+    <configuration scan="true" scanPeriod="10 seconds">
+
+        <appender name="fileLogAppender"
+                  class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>/var/log/thingsboard/${TB_SERVICE_ID}/thingsboard.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>/var/log/thingsboard/${TB_SERVICE_ID}/thingsboard.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <maxFileSize>100MB</maxFileSize>
+                <maxHistory>30</maxHistory>
+                <totalSizeCap>3GB</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{ISO8601} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{ISO8601} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+
+        <logger name="org.thingsboard.server" level="INFO"/>
+        <logger name="com.google.common.util.concurrent.AggregateFuture" level="OFF"/>
+        
+        <!-- Reduce logging for background services that are disabled -->
+        <logger name="org.thingsboard.server.service.housekeeper.HousekeeperService" level="WARN"/>
+        <logger name="org.thingsboard.server.service.state.DeviceStateService" level="WARN"/>
+
+    </configuration>

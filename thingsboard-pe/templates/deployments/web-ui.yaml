@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thingsboard-web-ui
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: thingsboard
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+spec:
+  replicas: {{ .Values.webui.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: thingsboard-webui
+      app.kubernetes.io/name: thingsboard-webui
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        admission.datadoghq.com/enabled: 'true'
+        app.kubernetes.io/instance: thingsboard-webui
+        app.kubernetes.io/name: thingsboard-webui
+        tags.datadoghq.com/service: tb-ui
+        tags.datadoghq.com/version: 4.0.1PE
+      annotations:
+        kubectl.kubernetes.io/restartedAt: '2025-08-15T12:58:19+02:00'
+    spec:
+      containers:
+        - name: thingsboard
+          image: {{ .Values.webui.image.repository }}:{{ .Values.webui.image.tag }}
+          ports:
+            - name: http
+              containerPort: 8084
+              protocol: TCP
+          env:
+            - name: TB_SERVICE_TYPE
+              value: {{ .Values.webui.serviceType }}
+            - name: HTTP_BIND_ADDRESS
+              value: {{ .Values.webui.bindAddress }}
+            - name: HTTP_BIND_PORT
+              value: {{ .Values.webui.bindPort | quote }}
+            - name: TB_ENABLE_PROXY
+              value: {{ .Values.webui.enableProxy | quote }}
+            - name: TB_HOST
+              value: {{ .Values.webui.tbHost }}
+            - name: TB_PORT
+              value: {{ .Values.webui.tbPort | quote }}
+            - name: LOGGER_LEVEL
+              value: {{ .Values.webui.loggerLevel }}
+            - name: LOG_FOLDER
+              value: {{ .Values.webui.logFolder }}
+            - name: LOGGER_FILENAME
+              value: {{ .Values.webui.loggerFilename }}
+            - name: DOCKER_MODE
+              value: {{ .Values.webui.dockerMode | quote }}
+            - name: SWAGGER_ENABLED
+              value: {{ .Values.webui.swaggerEnabled | quote }}
+          resources:
+            limits:
+              memory: {{ .Values.webui.resources.limits.memory }}
+            requests:
+              memory: {{ .Values.webui.resources.requests.memory }}
+          livenessProbe:
+            httpGet:
+              path: /index.html
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 120
+            timeoutSeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+          securityContext: {}
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: thingsboard-node-sa
+      serviceAccount: thingsboard-node-sa
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

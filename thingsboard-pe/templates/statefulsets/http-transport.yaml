@@ -1,0 +1,143 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: thingsboard-http-transport
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: thingsboard
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+spec:
+  replicas: {{ .Values.http.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: thingsboard-http
+      app.kubernetes.io/name: thingsboard-http
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: thingsboard-http
+        app.kubernetes.io/name: thingsboard-http
+    spec:
+      volumes:
+        - name: thingsboard-http-transport-config
+          configMap:
+            name: thingsboard-http-transport-config
+            items:
+              - key: conf
+                path: tb-http-transport.conf
+              - key: logback
+                path: logback.xml
+            defaultMode: 420
+        - name: thingsboard-node-logs
+          emptyDir: {}
+      containers:
+        - name: thingsboard
+          image: {{ .Values.http.image.repository }}:{{ .Values.http.image.tag }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.http.port }}
+              protocol: TCP
+          env:
+            - name: TB_SERVICE_ID
+              value: {{ .Values.http.serviceId }}
+            - name: TB_QUEUE_TYPE
+              value: {{ .Values.http.queueType }}
+            - name: HTTP_BIND_ADDRESS
+              value: {{ .Values.http.bindAddress }}
+            - name: HTTP_BIND_PORT
+              value: {{ .Values.http.bindPort | quote }}
+            - name: HTTP_REQUEST_TIMEOUT
+              value: {{ .Values.http.requestTimeout | quote }}
+            - name: TB_KAFKA_SERVERS
+              value: {{ .Values.http.kafkaServers }}
+            - name: TB_QUEUE_KAFKA_REPLICATION_FACTOR
+              value: {{ .Values.http.kafkaReplicationFactor | quote }}
+            - name: TB_QUEUE_KAFKA_PARTITIONS
+              value: {{ .Values.http.kafkaPartitions | quote }}
+            - name: TRANSPORT_HTTP_NETTY_BOSS_GROUP_THREAD_COUNT
+              value: {{ .Values.http.nettyBossThreads | quote }}
+            - name: TRANSPORT_HTTP_NETTY_WORKER_GROUP_THREAD_COUNT
+              value: {{ .Values.http.nettyWorkerThreads | quote }}
+            - name: TRANSPORT_HTTP_NETTY_MAX_PAYLOAD_SIZE
+              value: {{ .Values.http.nettyMaxPayloadSize | quote }}
+            - name: TRANSPORT_HTTP_NETTY_SO_KEEP_ALIVE
+              value: {{ .Values.http.nettySoKeepAlive | quote }}
+            - name: HTTP_MAX_REQUEST_TIMEOUT
+              value: {{ .Values.http.maxRequestTimeout | quote }}
+            - name: QUEUE_CORE_SHUTDOWN_WAIT_TIME_MS
+              value: {{ .Values.http.coreShutdownWaitTimeMs | quote }}
+            - name: TB_SHUTDOWN_TIMEOUT_MS
+              value: {{ .Values.http.shutdownTimeoutMs | quote }}
+            - name: TB_QUEUE_TRANSPORT_MAX_PENDING_REQUESTS
+              value: {{ .Values.http.transportMaxPendingRequests | quote }}
+            - name: TB_QUEUE_KAFKA_MAX_POLL_RECORDS
+              value: {{ .Values.http.kafkaMaxPollRecords | quote }}
+            - name: TB_QUEUE_KAFKA_MAX_POLL_INTERVAL_MS
+              value: {{ .Values.http.kafkaMaxPollIntervalMs | quote }}
+            - name: TB_QUEUE_KAFKA_CONSUMER_THREADS
+              value: {{ .Values.http.kafkaConsumerThreads | quote }}
+            - name: TB_QUEUE_KAFKA_BATCH_SIZE
+              value: {{ .Values.http.kafkaBatchSize | quote }}
+            - name: TB_QUEUE_KAFKA_LINGER_MS
+              value: {{ .Values.http.kafkaLingerMs | quote }}
+            - name: TB_QUEUE_KAFKA_BUFFER_MEMORY
+              value: {{ .Values.http.kafkaBufferMemory | quote }}
+            - name: TB_QUEUE_KAFKA_REQUEST_TIMEOUT_MS
+              value: {{ .Values.http.kafkaRequestTimeoutMs | quote }}
+            - name: TB_QUEUE_TRANSPORT_CONSUMER_THREADS
+              value: {{ .Values.http.transportConsumerThreads | quote }}
+            - name: TB_QUEUE_TRANSPORT_NOTIFICATIONS_CONSUMER_THREADS
+              value: {{ .Values.http.transportNotificationsConsumerThreads | quote }}
+            - name: TB_QUEUE_CORE_THREADS
+              value: {{ .Values.http.coreThreads | quote }}
+            - name: TB_QUEUE_STATS_ENABLED
+              value: {{ .Values.http.queueStatsEnabled | quote }}
+          resources:
+            limits:
+              cpu: {{ .Values.http.resources.limits.cpu }}
+              memory: {{ .Values.http.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.http.resources.requests.cpu }}
+              memory: {{ .Values.http.resources.requests.memory }}
+          volumeMounts:
+            - name: thingsboard-http-transport-config
+              mountPath: /config
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.http.port }}
+            initialDelaySeconds: 120
+            timeoutSeconds: 1
+            periodSeconds: 20
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.http.port }}
+            timeoutSeconds: 1
+            periodSeconds: 20
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+          securityContext: {}
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: thingsboard
+      serviceAccount: thingsboard
+      securityContext: {}
+      schedulerName: default-scheduler
+  serviceName: tb-http-transport
+  podManagementPolicy: Parallel
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 0
+  revisionHistoryLimit: 10
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
