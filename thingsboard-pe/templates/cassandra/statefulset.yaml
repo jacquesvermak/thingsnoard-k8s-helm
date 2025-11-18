@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: cassandra
+  namespace: {{ .Values.global.namespace }}
 spec:
   selector:
     matchLabels:
@@ -17,6 +18,11 @@ spec:
         - name: harbor-cassandra-pull-secret
       containers:
         - name: cassandra
-          image: harbor.qa.stagezero.co.za/cassandra/cassandra:5.0.6
+          image: {{ .Values.cassandra.image.registry }}:{{ .Values.cassandra.image.tag }}
           ports:
             - containerPort: 9042
+          resources:
+            limits:
+              memory: {{ .Values.cassandra.resources.limits.memory }}
+            requests:
+              memory: {{ .Values.cassandra.resources.requests.memory }}

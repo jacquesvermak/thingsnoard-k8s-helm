@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: thingsboard-web-ui
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "thingsboard-pe.namespace" . }}
   labels:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: Helm

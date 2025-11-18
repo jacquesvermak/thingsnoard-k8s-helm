@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: thingsboard-http-transport
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "thingsboard-pe.namespace" . }}
   labels:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: Helm

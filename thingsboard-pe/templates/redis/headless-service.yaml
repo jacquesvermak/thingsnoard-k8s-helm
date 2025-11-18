@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.redis.headlessServiceName }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "thingsboard-pe.namespace" . }}
   labels:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: Helm
