@@ -251,20 +251,6 @@ zookeeper:
         requests:
           cpu: 50m
           memory: 128Mi
-        SM49AgEGCCqGSM49AwEHA0IABMdgAHc1Y4LoOPZ5x0eiypYx2veZaKpQKq7djXt6
-        rZOUD7u35YMTkDtJ/7Obq+TxQR5c52Elj65u+zW0yrANU80wCgYIKoZIzj0EAwID
-        SAAwRQIhAO3qH7xjVewGUmqpJCQdLOv4XVPqiBtlJ69hzP/BXOz9AiAxJG1wPKkw
-        P5cjGDZCEOJZ1cX3myRk6SdB3Qwjm7MxHA==
-        -----END CERTIFICATE-----
-      serverKey: |
-        -----BEGIN EC PARAMETERS-----
-        BggqhkjOPQMBBw==
-        -----END EC PARAMETERS-----
-        -----BEGIN EC PRIVATE KEY-----
-        MHcCAQEEINj2OLQ2wOSSELhxVe8M+/28oA6pGa/nBGoERspT8dU1oAoGCCqGSM49
-        AwEHoUQDQgAEx2AAdzVjgug49nnHR6LKljHa95loqlAqrt2Ne3qtk5QPu7flgxOQ
-        O0n/s5ur5PFBHlznYSWPrm77NbTKsA1TzQ==
-        -----END EC PRIVATE KEY-----
 
 # Ingress configuration
 ingress:
