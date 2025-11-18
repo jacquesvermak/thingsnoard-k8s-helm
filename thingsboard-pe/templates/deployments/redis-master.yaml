@@ -41,13 +41,7 @@ spec:
               value: {{ .Values.redis.auth.password | quote }}
             - name: REDIS_PORT
               value: "6379"
-          resources:
-            limits:
-              cpu: {{ .Values.redis.master.resources.limits.cpu }}
-              memory: {{ .Values.redis.master.resources.limits.memory }}
-            requests:
-              cpu: {{ .Values.redis.master.resources.requests.cpu }}
-              memory: {{ .Values.redis.master.resources.requests.memory }}
+          # resources removed; not present in new values.yaml structure
           volumeMounts:
             - name: config
               mountPath: /etc/redis
