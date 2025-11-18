@@ -271,4 +271,26 @@ autoscaling:
     minReplicas: 1
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
+redis:
+  masterServiceName: "thingsboard-redis-master"
+  headlessServiceName: "thingsboard-redis-headless"
+  architecture: standalone
+  auth:
+    password: setplease
+  master:
+    kind: Deployment
+    persistence:
+      enabled: false
+    disableCommands:
+      - FLUSHALL
+  replica:
+    replicaCount: 0
+    persistence:
+      enabled: false
+  image:
+    repository: harbor.qa.stagezero.co.za/redis/redis
+    tag: 8.4-rc1-alpine
+    size: 20Gi
+    storageClass: "ebs-sc"
+  port: 6379
 
