@@ -42,6 +42,8 @@ spec:
               value: "1"
             - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
               value: "1"
+            - name: KAFKA_PROCESS_ROLES
+              value: {{ .Values.kafka.env.KAFKA_PROCESS_ROLES | quote }}
           resources:
             {{- toYaml .Values.kafka.resources | nindent 12 }}
           volumeMounts:
