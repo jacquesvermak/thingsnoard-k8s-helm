@@ -185,6 +185,8 @@ kafka:
     requests:
       cpu: 1000m
       memory: 4Gi
+  env:
+    KAFKA_PROCESS_ROLES: "broker,controller"
   storage:
     size: 50Gi
     storageClass: ""
