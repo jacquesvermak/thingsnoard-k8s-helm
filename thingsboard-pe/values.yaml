@@ -211,21 +211,12 @@ redis:
     replicaCount: 0
     persistence:
       enabled: false
-  image:
-    repository: harbor.qa.stagezero.co.za/redis/redis
-    tag: 8.4-rc1-alpine
-      maxmemory 8gb
-      maxmemory-policy allkeys-lru
-      tcp-keepalive 60
-    replicaConf: |
-      dir /data
-      slave-read-only yes
-      # User-supplied replica configuration:
-      rename-command FLUSHDB ""
-      rename-command FLUSHALL ""
-      # End of replica configuration
-    size: 20Gi
-    storageClass: ""
+    image:
+      repository: harbor.qa.stagezero.co.za/redis/redis
+      tag: 8.4-rc1-alpine
+      size: 20Gi
+      storageClass: ""
+    port: 6379
 
 # Zookeeper configuration
 zookeeper:
