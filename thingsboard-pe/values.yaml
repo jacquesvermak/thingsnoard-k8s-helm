@@ -294,3 +294,7 @@ redis:
     storageClass: "ebs-sc"
   port: 6379
 
+security:
+  certificates:
+    enabled: false
+
