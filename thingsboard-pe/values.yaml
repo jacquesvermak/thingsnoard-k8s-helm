@@ -192,52 +192,24 @@ kafka:
     servers: "zookeeper:2181"
 
 # Cache configuration
+
 redis:
-  enabled: true
-  headlessServiceName: "thingsboard-redis-headless"
-  masterServiceName: "thingsboard-redis-master"
-  port: 6379
-  version: "6.2.6"
-  serviceName: "redis-master"
-  image:
-    registry: harbor.qa.stagezero.co.za/redis/redis
-    tag: "8.4-rc1-alpine"
+  architecture: standalone
   auth:
-    enabled: true
-    password: "setplease"
+    password: setplease
   master:
-    replicas: 1
-    resources:
-      limits:
-        cpu: 1000m
-        memory: 4Gi
-      requests:
-        cpu: 500m
-        memory: 2Gi
-  master:
-    resources:
-      limits:
-        cpu: 1000m
-        memory: 4Gi
-      requests:
-        cpu: 500m
-        memory: 2Gi
-  storage:
-  config:
-    masterConf: |
-      dir /data
-      # User-supplied master configuration:
-      rename-command FLUSHALL ""
-      # End of master configuration
-    redisConf: |
-      # User-supplied common configuration:
-      # Enable AOF https://redis.io/topics/persistence#append-only-file
-      appendonly yes
-      # Disable RDB persistence, AOF persistence already enabled.
-      save ""
-      # End of common configuration
-      auto-aof-rewrite-percentage 100
-      auto-aof-rewrite-min-size 32mb
+    kind: Deployment
+    persistence:
+      enabled: false
+    disableCommands:
+      - FLUSHALL
+  replica:
+    replicaCount: 0
+    persistence:
+      enabled: false
+  image:
+    repository: harbor.qa.stagezero.co.za/redis/redis
+    tag: 8.4-rc1-alpine
       maxmemory 8gb
       maxmemory-policy allkeys-lru
       tcp-keepalive 60
