@@ -4,11 +4,8 @@ metadata:
   name: thingsboard-redis-master
   namespace: {{ .Values.global.namespace }}
   labels:
-    app.kubernetes.io/component: master
-    app.kubernetes.io/instance: thingsboard
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: redis
-    app.kubernetes.io/version: {{ .Values.redis.image.tag }}
+    app: redis
+    component: master
 spec:
   replicas: {{ .Values.redis.master.replicas | default 3 }}
   selector:
@@ -19,11 +16,8 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/component: master
-        app.kubernetes.io/instance: thingsboard
-        app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/name: redis
-        app.kubernetes.io/version: {{ .Values.redis.image.tag }}
+        app: redis
+        component: master
     spec:
       imagePullSecrets:
         - name: harbor-redis-pull-secret

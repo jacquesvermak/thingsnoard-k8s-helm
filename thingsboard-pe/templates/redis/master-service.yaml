@@ -4,12 +4,8 @@ metadata:
   name: {{ .Values.redis.masterServiceName }}
   namespace: {{ include "thingsboard-pe.namespace" . }}
   labels:
-    app.kubernetes.io/component: master
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: redis
-    app.kubernetes.io/version: {{ .Values.redis.version }}
-    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app: redis
+    component: master
 spec:
   ports:
     - name: tcp-redis
