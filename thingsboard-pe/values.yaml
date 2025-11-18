@@ -1,6 +1,6 @@
 # Global configuration
 global:
-  namespace: thingsboard-qa
+  namespace: thingsboard-test
   imageRegistry: ""
   imagePullSecrets: []
   tbLicenseSecret: "biGeBHrEO4LaxCqPQa9imyFL"
@@ -260,46 +260,6 @@ zookeeper:
   storage:
     size: 20Gi
     storageClass: ""
-## TEST CHANGE: Trigger GitHub Actions Harbor push
-# HTTP Transport configuration
-webui:
-  replicaCount: 1
-  image:
-    repository: docker.io/thingsboard/tb-pe-web-ui
-    tag: "4.0.1PE"
-  serviceType: web
-  bindAddress: "0.0.0.0"
-  bindPort: 8084
-  enableProxy: false
-  tbHost: "thingsboard-node"
-  tbPort: 8080
-  loggerLevel: info
-  logFolder: logs
-  loggerFilename: tb-web-ui-%DATE%.log
-  dockerMode: true
-  swaggerEnabled: true
-  resources:
-    limits:
-      memory: 2Gi
-    requests:
-      memory: 1Gi
-  nettyMaxPayloadSize: 131072
-  nettySoKeepAlive: true
-  maxRequestTimeout: 90000
-  coreShutdownWaitTimeMs: 90000
-  shutdownTimeoutMs: 90000
-  transportMaxPendingRequests: 100000
-  kafkaMaxPollRecords: 3000
-  kafkaMaxPollIntervalMs: 420000
-  kafkaConsumerThreads: 15
-  kafkaBatchSize: 1572864
-  kafkaLingerMs: 15
-  kafkaBufferMemory: 134217728
-  kafkaRequestTimeoutMs: 90000
-  transportConsumerThreads: 50
-  transportNotificationsConsumerThreads: 15
-  coreThreads: 80
-  queueStatsEnabled: true    
 
 # Security
 security:
@@ -341,3 +301,4 @@ autoscaling:
     minReplicas: 1
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
+

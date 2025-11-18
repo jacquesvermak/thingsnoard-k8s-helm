@@ -47,13 +47,106 @@ thingsboard-pe/
    helm install thingsboard .
    ```
 
-## Notes
-- Ensure your Kubernetes cluster meets the resource requirements for ThingsBoard and its dependencies.
-- The directory `statefullsets` appears to be a typo; consider renaming it to `statefulsets` for consistency.
-- For more information, see the chart-specific `README.md` in `thingsboard-pe/`.
+## Upgrade the chart
+```bash
+helm upgrade thingsboard .
+```
+
+## Uninstall the chart
+```bash
+helm uninstall thingsboard
+```
+
+## Supported Kubernetes Versions
+- Kubernetes 1.22+
+- Tested on major cloud providers (EKS, AKS, GKE)
+
+## Troubleshooting & Common Issues
+- Ensure all required images are accessible from your cluster.
+- Check resource limits and requests in `values.yaml` for production workloads.
+- For persistent storage, verify your storage class and volume configuration.
+- If you encounter Helm errors, run `helm lint .` for chart validation.
+
+## Deployment Examples
+
+### Development Environment
+```bash
+helm install tb-dev ./thingsboard-pe \
+  --namespace tb-dev \
+  --create-namespace \
+  --set global.namespace=tb-dev \
+  --set thingsboard.node.resources.requests.memory=10Gi \
+  --set thingsboard.node.resources.limits.memory=15Gi \
+  --set thingsboard.transports.coap.replicas=2
+```
+
+### Staging Environment
+```bash
+helm install tb-staging ./thingsboard-pe \
+  --namespace tb-staging \
+  --create-namespace \
+  --set global.namespace=tb-staging \
+  --set thingsboard.node.resources.requests.memory=20Gi \
+  --set thingsboard.node.resources.limits.memory=30Gi \
+  --set thingsboard.transports.coap.replicas=3
+```
+
+### Production Environment
+```bash
+helm install tb-prod ./thingsboard-pe \
+  --namespace tb-prod \
+  --create-namespace \
+  --set global.namespace=tb-prod \
+  --set thingsboard.node.resources.requests.memory=32Gi \
+  --set thingsboard.node.resources.limits.memory=40Gi \
+  --set thingsboard.transports.coap.replicas=6
+```
+
+## Custom Values File Example
+
+```yaml
+# production-values.yaml
+global:
+  namespace: thingsboard-prod
+
+thingsboard:
+  image:
+    tag: "4.0.1PE"
+  node:
+    replicas: 1
+    resources:
+      requests:
+        cpu: "8"
+        memory: 32Gi
+      limits:
+        cpu: "16"
+        memory: 40Gi
+    env:
+      TB_LICENSE_SECRET: "your-production-license"
+  transports:
+    coap:
+      replicas: 6
+      resources:
+        requests:
+          cpu: 500m
+          memory: 8Gi
+        limits:
+          cpu: 1000m
+          memory: 12Gi
+security:
+  certificates:
+    dtls:
+      serverCert: |
+        -----BEGIN CERTIFICATE-----
+        [Your production certificate]
+        -----END CERTIFICATE-----
+```
+
+## Contributing
+Contributions are welcome! Please open issues or submit pull requests for improvements.
 
 ## License
-Specify your license here (e.g., Apache 2.0, MIT).
+Apache License 2.0
 
 ## Maintainers
 - Jacques Vermak
