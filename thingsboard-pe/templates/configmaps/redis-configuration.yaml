@@ -5,8 +5,8 @@ metadata:
   namespace: {{ .Values.global.namespace }}
 data:
   master.conf: |-
-    {{ .Values.redis.config.masterConf | nindent 4 }}
+    # No custom master config
   redis.conf: |-
-    {{ .Values.redis.config.redisConf | nindent 4 }}
+    # No custom redis config
   replica.conf: |-
-    {{ .Values.redis.config.replicaConf | nindent 4 }}
+    # No custom replica config
