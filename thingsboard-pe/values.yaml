@@ -168,7 +168,7 @@ cassandra:
       memory: 512Mi
   storage:
     size: 100Gi
-    storageClass: ""
+    storageClass: "ebs-sc"
 
 # Message queue configuration
 kafka:
@@ -215,7 +215,7 @@ kafka:
         TB_QUEUE_REQUEST_TIMEOUT: "120000"
     tag: 8.4-rc1-alpine
     size: 20Gi
-    storageClass: ""
+    storageClass: "ebs-sc"
   port: 6379
 
 # Zookeeper configuration
@@ -233,6 +233,9 @@ zookeeper:
     requests:
       cpu: 500m
       memory: 2Gi
+  storage:
+    size: 20Gi
+    storageClass: "ebs-sc"
     http:
       enabled: true
       replicaCount: 1
