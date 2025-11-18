@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/version: {{ .Chart.AppVersion }}
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 spec:
-  replicas: {{ .Values.webui.replicaCount }}
+  replicas: {{ .Values.thingsboard.webui.replicaCount }}
   selector:
     matchLabels:
       app.kubernetes.io/instance: thingsboard-webui
