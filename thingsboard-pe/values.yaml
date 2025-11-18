@@ -163,9 +163,9 @@ cassandra:
     seeds: "cassandra-0.cassandra"
   resources:
     limits:
-      memory: 2Gi
-    requests:
       memory: 1Gi
+    requests:
+      memory: 512Mi
   storage:
     size: 100Gi
     storageClass: ""
@@ -190,29 +190,29 @@ kafka:
   storage:
     size: 50Gi
     storageClass: ""
-  zookeeper:
-    servers: "zookeeper:2181"
-
-# Cache configuration
-
-redis:
-  masterServiceName: "thingsboard-redis-master"
-  headlessServiceName: "thingsboard-redis-headless"
-  architecture: standalone
-  auth:
-    password: setplease
-  master:
-    kind: Deployment
-    persistence:
-      enabled: false
-    disableCommands:
-      - FLUSHALL
-  replica:
-    replicaCount: 0
-    persistence:
-      enabled: false
-  image:
-    repository: harbor.qa.stagezero.co.za/redis/redis
+    coap:
+      enabled: true
+      replicas: 1
+      image:
+        registry: docker.io/thingsboard/tb-pe-coap-transport
+        tag: "4.0.1PE"
+      port: 5684
+      dtlsEnabled: true
+      service:
+        type: LoadBalancer
+        annotations:
+          service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+      resources:
+        limits:
+          cpu: 100m
+          memory: 256Mi
+        requests:
+          cpu: 50m
+          memory: 128Mi
+      env:
+        TB_KAFKA_SERVERS: "kafka:9092"
+        COAP_TIMEOUT: "60000"
+        TB_QUEUE_REQUEST_TIMEOUT: "120000"
     tag: 8.4-rc1-alpine
     size: 20Gi
     storageClass: ""
@@ -233,24 +233,24 @@ zookeeper:
     requests:
       cpu: 500m
       memory: 2Gi
-  storage:
-    size: 20Gi
-    storageClass: ""
-
-# Security
-security:
-  certificates:
-    enabled: true
-    dtls:
-      serverCert: |
-        -----BEGIN CERTIFICATE-----
-        MIIBdTCCAZsCFENbCvDkHJ//r9nuIDynYYlYpAzzMAoGCCqGSM49BAMCMH0xCzAJ
-        BgNVBAYTAlpBMRUwEwYDVQQIDAxXZXN0ZXJuIENhcGUxEjAQBgNVBAcMCUNhcGUg
-        VG93bjESMBAGA1UECgwJU3RhZ2VaZXJvMQ0wCwYDVQQLDARDb0FQMSAwHgYDVQQD
-        DBdjb2FwLnFhLnN0YWdlemVyby5jby56YTAeFw0yNDExMTIwNjA0MjBaFw0yNTEx
-        MTIwNjA0MjBaMH0xCzAJBgNVBAYTAlpBMRUwEwYDVQQIDAxXZXN0ZXJuIENhcGUx
-        EjAQBgNVBAcMCUNhcGUgVG93bjESMBAGA1UECgwJU3RhZ2VaZXJvMQ0wCwYDVQQL
-        DARDb0FQMSAwHgYDVQQDDBdjb2FwLnFhLnN0YWdlemVyby5jby56YTBZMBMGByqG
+    http:
+      enabled: true
+      replicaCount: 1
+      image:
+        registry: docker.io/thingsboard/tb-pe-http-transport
+        tag: "4.0.1PE"
+      port: 8080
+      service:
+        type: LoadBalancer
+        annotations:
+          service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+      resources:
+        limits:
+          cpu: 100m
+          memory: 256Mi
+        requests:
+          cpu: 50m
+          memory: 128Mi
         SM49AgEGCCqGSM49AwEHA0IABMdgAHc1Y4LoOPZ5x0eiypYx2veZaKpQKq7djXt6
         rZOUD7u35YMTkDtJ/7Obq+TxQR5c52Elj65u+zW0yrANU80wCgYIKoZIzj0EAwID
         SAAwRQIhAO3qH7xjVewGUmqpJCQdLOv4XVPqiBtlJ69hzP/BXOz9AiAxJG1wPKkw
