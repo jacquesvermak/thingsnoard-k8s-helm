@@ -194,6 +194,8 @@ kafka:
 # Cache configuration
 
 redis:
+  masterServiceName: "thingsboard-redis-master"
+  headlessServiceName: "thingsboard-redis-headless"
   architecture: standalone
   auth:
     password: setplease
