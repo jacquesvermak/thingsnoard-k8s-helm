@@ -293,6 +293,7 @@ security:
 # Ingress configuration
 ingress:
   host: "thingsboard.local"
+  className: "nginx"
 
 # Horizontal Pod Autoscaling
 autoscaling:

@@ -106,7 +106,7 @@ data:
 
         export ZOOKEEPER_ENABLED=true
 
-        export ZOOKEEPER_URL=thingsboard-zookeeper-0.thingsboard-zookeeper-headless.thingsboard-qa.svc.cluster.local:2181
+        export ZOOKEEPER_URL=thingsboard-zookeeper-0.thingsboard-zookeeper-headless.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local:2181
 
         export TB_KAFKA_SERVERS=thingsboard-kafka:9092
 

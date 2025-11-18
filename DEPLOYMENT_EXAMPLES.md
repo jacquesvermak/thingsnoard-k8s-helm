@@ -95,7 +95,7 @@ helm install tb-prod ./thingsboard-pe \
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `global.namespace` | Target namespace | `thingsboard-qa` |
+| `global.namespace` | Target namespace | `{{ include "thingsboard-pe.namespace" . }}` |
 | `thingsboard.node.replicas` | Core service replicas | `1` |
 | `thingsboard.transports.coap.replicas` | CoAP transport replicas | `4` |
 | `thingsboard.transports.coap.port` | DTLS port | `5684` |
