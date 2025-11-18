@@ -211,12 +211,12 @@ redis:
     replicaCount: 0
     persistence:
       enabled: false
-    image:
-      repository: harbor.qa.stagezero.co.za/redis/redis
-      tag: 8.4-rc1-alpine
-      size: 20Gi
-      storageClass: ""
-    port: 6379
+  image:
+    repository: harbor.qa.stagezero.co.za/redis/redis
+    tag: 8.4-rc1-alpine
+    size: 20Gi
+    storageClass: ""
+  port: 6379
 
 # Zookeeper configuration
 zookeeper:

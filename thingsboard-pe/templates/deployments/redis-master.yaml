@@ -29,7 +29,7 @@ spec:
         - name: harbor-redis-pull-secret
       containers:
         - name: redis
-          image: {{ .Values.redis.image.registry }}:{{ .Values.redis.image.tag }}
+          image: {{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
           command: ["redis-server"]
           args: ["/etc/redis/redis.conf"]
           ports:
@@ -41,12 +41,6 @@ spec:
               value: {{ .Values.redis.auth.password | quote }}
             - name: REDIS_PORT
               value: "6379"
-          # resources removed; not present in new values.yaml structure
-          volumeMounts:
-            - name: config
-              mountPath: /etc/redis
-            - name: redis-data
-              mountPath: /data
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 1001
