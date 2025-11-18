@@ -1,46 +1,46 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-	name: thingsboard-jsexecutor
-	namespace: {{ .Values.global.namespace }}
-	labels:
-		app.kubernetes.io/instance: thingsboard-jsexecutor
-		app.kubernetes.io/name: thingsboard-jsexecutor
+  name: thingsboard-jsexecutor
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app.kubernetes.io/instance: thingsboard-jsexecutor
+    app.kubernetes.io/name: thingsboard-jsexecutor
 spec:
-	replicas: {{ .Values.thingsboard.jsexecutor.replicas }}
-	selector:
-		matchLabels:
-			app.kubernetes.io/instance: thingsboard-jsexecutor
-			app.kubernetes.io/name: thingsboard-jsexecutor
-	strategy:
-		rollingUpdate:
-			maxSurge: 25%
-			maxUnavailable: 25%
-		type: RollingUpdate
-	template:
-		metadata:
-			labels:
-				app.kubernetes.io/instance: thingsboard-jsexecutor
-				app.kubernetes.io/name: thingsboard-jsexecutor
-		spec:
-			containers:
-				- name: thingsboard
-					image: {{ .Values.thingsboard.jsexecutor.image.registry }}:{{ .Values.thingsboard.jsexecutor.image.tag }}
-					imagePullPolicy: {{ .Values.thingsboard.jsexecutor.image.pullPolicy }}
-					env:
-						- name: REMOTE_JS_EVAL_REQUEST_TOPIC
-							value: {{ .Values.thingsboard.jsexecutor.env.REMOTE_JS_EVAL_REQUEST_TOPIC | quote }}
-						- name: TB_KAFKA_SERVERS
-							value: {{ .Values.thingsboard.jsexecutor.env.TB_KAFKA_SERVERS | quote }}
-						- name: TB_QUEUE_KAFKA_REPLICATION_FACTOR
-							value: {{ .Values.thingsboard.jsexecutor.env.TB_QUEUE_KAFKA_REPLICATION_FACTOR | quote }}
-						- name: LOGGER_LEVEL
-							value: {{ .Values.thingsboard.jsexecutor.env.LOGGER_LEVEL | quote }}
-						- name: LOG_FOLDER
-							value: {{ .Values.thingsboard.jsexecutor.env.LOG_FOLDER | quote }}
-						- name: LOGGER_FILENAME
-							value: {{ .Values.thingsboard.jsexecutor.env.LOGGER_FILENAME | quote }}
-						- name: DOCKER_MODE
-							value: {{ .Values.thingsboard.jsexecutor.env.DOCKER_MODE | quote }}
-						- name: SCRIPT_BODY_TRACE_FREQUENCY
-							value: {{ .Values.thingsboard.jsexecutor.env.SCRIPT_BODY_TRACE_FREQUENCY | quote }}
+  replicas: {{ .Values.thingsboard.jsexecutor.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: thingsboard-jsexecutor
+      app.kubernetes.io/name: thingsboard-jsexecutor
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: thingsboard-jsexecutor
+        app.kubernetes.io/name: thingsboard-jsexecutor
+    spec:
+      containers:
+        - name: thingsboard
+          image: {{ .Values.thingsboard.jsexecutor.image.registry }}:{{ .Values.thingsboard.jsexecutor.image.tag }}
+          imagePullPolicy: {{ .Values.thingsboard.jsexecutor.image.pullPolicy }}
+          env:
+            - name: REMOTE_JS_EVAL_REQUEST_TOPIC
+              value: {{ .Values.thingsboard.jsexecutor.env.REMOTE_JS_EVAL_REQUEST_TOPIC | quote }}
+            - name: TB_KAFKA_SERVERS
+              value: {{ .Values.thingsboard.jsexecutor.env.TB_KAFKA_SERVERS | quote }}
+            - name: TB_QUEUE_KAFKA_REPLICATION_FACTOR
+              value: {{ .Values.thingsboard.jsexecutor.env.TB_QUEUE_KAFKA_REPLICATION_FACTOR | quote }}
+            - name: LOGGER_LEVEL
+              value: {{ .Values.thingsboard.jsexecutor.env.LOGGER_LEVEL | quote }}
+            - name: LOG_FOLDER
+              value: {{ .Values.thingsboard.jsexecutor.env.LOG_FOLDER | quote }}
+            - name: LOGGER_FILENAME
+              value: {{ .Values.thingsboard.jsexecutor.env.LOGGER_FILENAME | quote }}
+            - name: DOCKER_MODE
+              value: {{ .Values.thingsboard.jsexecutor.env.DOCKER_MODE | quote }}
+            - name: SCRIPT_BODY_TRACE_FREQUENCY
+              value: {{ .Values.thingsboard.jsexecutor.env.SCRIPT_BODY_TRACE_FREQUENCY | quote }}

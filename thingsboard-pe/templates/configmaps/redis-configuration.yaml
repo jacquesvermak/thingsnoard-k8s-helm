@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-	name: thingsboard-redis-configuration
-	namespace: {{ .Values.global.namespace }}
+  name: thingsboard-redis-configuration
+  namespace: {{ .Values.global.namespace }}
 data:
-	master.conf: |-
-		{{ .Values.redis.config.masterConf | nindent 4 }}
-	redis.conf: |-
-		{{ .Values.redis.config.redisConf | nindent 4 }}
-	replica.conf: |-
-		{{ .Values.redis.config.replicaConf | nindent 4 }}
+  master.conf: |-
+    {{ .Values.redis.config.masterConf | nindent 4 }}
+  redis.conf: |-
+    {{ .Values.redis.config.redisConf | nindent 4 }}
+  replica.conf: |-
+    {{ .Values.redis.config.replicaConf | nindent 4 }}

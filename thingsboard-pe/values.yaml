@@ -290,6 +290,10 @@ security:
         O0n/s5ur5PFBHlznYSWPrm77NbTKsA1TzQ==
         -----END EC PRIVATE KEY-----
 
+# Ingress configuration
+ingress:
+  host: "thingsboard.local"
+
 # Horizontal Pod Autoscaling
 autoscaling:
   enabled: true

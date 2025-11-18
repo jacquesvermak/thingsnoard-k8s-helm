@@ -29,39 +29,39 @@ spec:
     spec:
       containers:
         - name: thingsboard
-          image: {{ .Values.webui.image.repository }}:{{ .Values.webui.image.tag }}
+          image: {{ .Values.thingsboard.webui.image.repository }}:{{ .Values.thingsboard.webui.image.tag }}
           ports:
             - name: http
               containerPort: 8084
               protocol: TCP
           env:
             - name: TB_SERVICE_TYPE
-              value: {{ .Values.webui.serviceType }}
+              value: {{ .Values.thingsboard.webui.serviceType }}
             - name: HTTP_BIND_ADDRESS
-              value: {{ .Values.webui.bindAddress }}
+              value: {{ .Values.thingsboard.webui.bindAddress }}
             - name: HTTP_BIND_PORT
-              value: {{ .Values.webui.bindPort | quote }}
+              value: {{ .Values.thingsboard.webui.bindPort | quote }}
             - name: TB_ENABLE_PROXY
-              value: {{ .Values.webui.enableProxy | quote }}
+              value: {{ .Values.thingsboard.webui.enableProxy | quote }}
             - name: TB_HOST
-              value: {{ .Values.webui.tbHost }}
+              value: {{ .Values.thingsboard.webui.tbHost }}
             - name: TB_PORT
-              value: {{ .Values.webui.tbPort | quote }}
+              value: {{ .Values.thingsboard.webui.tbPort | quote }}
             - name: LOGGER_LEVEL
-              value: {{ .Values.webui.loggerLevel }}
+              value: {{ .Values.thingsboard.webui.loggerLevel }}
             - name: LOG_FOLDER
-              value: {{ .Values.webui.logFolder }}
+              value: {{ .Values.thingsboard.webui.logFolder }}
             - name: LOGGER_FILENAME
-              value: {{ .Values.webui.loggerFilename }}
+              value: {{ .Values.thingsboard.webui.loggerFilename }}
             - name: DOCKER_MODE
-              value: {{ .Values.webui.dockerMode | quote }}
+              value: {{ .Values.thingsboard.webui.dockerMode | quote }}
             - name: SWAGGER_ENABLED
-              value: {{ .Values.webui.swaggerEnabled | quote }}
+              value: {{ .Values.thingsboard.webui.swaggerEnabled | quote }}
           resources:
             limits:
-              memory: {{ .Values.webui.resources.limits.memory }}
+              memory: {{ .Values.thingsboard.webui.resources.limits.memory }}
             requests:
-              memory: {{ .Values.webui.resources.requests.memory }}
+              memory: {{ .Values.thingsboard.webui.resources.requests.memory }}
           livenessProbe:
             httpGet:
               path: /index.html
