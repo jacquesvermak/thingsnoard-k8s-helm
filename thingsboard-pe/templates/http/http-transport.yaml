@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: thingsboard-http-transport
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: thingsboard
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+spec:
+  replicas: {{ .Values.thingsboard.transports.http.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: thingsboard-http
+      app.kubernetes.io/name: thingsboard-http
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: thingsboard-http
+        app.kubernetes.io/name: thingsboard-http
+    spec:
+      volumes:
+        - name: thingsboard-http-transport-config
+          configMap:
+            name: thingsboard-http-transport-config
+            items:
+              - key: conf
+                path: tb-http-transport.conf
+              - key: logback
+                path: logback.xml
+            defaultMode: 420
+        - name: thingsboard-node-logs
+          emptyDir: {}
+      containers:
+        - name: thingsboard
+          image: {{ .Values.thingsboard.transports.http.image.repository }}:{{ .Values.thingsboard.transports.http.image.tag }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.thingsboard.transports.http.port }}
+              protocol: TCP
+          env:
+            - name: TB_SERVICE_ID
+              value: {{ .Values.thingsboard.transports.http.serviceId }}
+            - name: TB_QUEUE_TYPE
+              value: {{ .Values.thingsboard.transports.http.queueType }}
+            - name: HTTP_BIND_ADDRESS
+              value: {{ .Values.thingsboard.transports.http.bindAddress }}
+            - name: HTTP_BIND_PORT
+              value: {{ .Values.thingsboard.transports.http.bindPort | quote }}
+            - name: HTTP_REQUEST_TIMEOUT
+              value: {{ .Values.thingsboard.transports.http.requestTimeout | quote }}
+            - name: TB_KAFKA_SERVERS
+              value: {{ .Values.thingsboard.transports.http.kafkaServers }}
+            - name: TB_QUEUE_KAFKA_REPLICATION_FACTOR
+              value: {{ .Values.thingsboard.transports.http.kafkaReplicationFactor | quote }}
+            - name: TB_QUEUE_KAFKA_PARTITIONS
+              value: {{ .Values.thingsboard.transports.http.kafkaPartitions | quote }}
+            - name: TRANSPORT_HTTP_NETTY_BOSS_GROUP_THREAD_COUNT
+              value: {{ .Values.thingsboard.transports.http.nettyBossThreads | quote }}
+            - name: TRANSPORT_HTTP_NETTY_WORKER_GROUP_THREAD_COUNT
+              value: {{ .Values.thingsboard.transports.http.nettyWorkerThreads | quote }}
+            - name: TRANSPORT_HTTP_NETTY_MAX_PAYLOAD_SIZE
+              value: {{ .Values.thingsboard.transports.http.nettyMaxPayloadSize | quote }}
+            - name: TRANSPORT_HTTP_NETTY_SO_KEEP_ALIVE
+              value: {{ .Values.thingsboard.transports.http.nettySoKeepAlive | quote }}
+            - name: HTTP_MAX_REQUEST_TIMEOUT
+              value: {{ .Values.thingsboard.transports.http.maxRequestTimeout | quote }}
+            - name: QUEUE_CORE_SHUTDOWN_WAIT_TIME_MS
+              value: {{ .Values.thingsboard.transports.http.coreShutdownWaitTimeMs | quote }}
+            - name: TB_SHUTDOWN_TIMEOUT_MS
+              value: {{ .Values.thingsboard.transports.http.shutdownTimeoutMs | quote }}
+            - name: TB_QUEUE_TRANSPORT_MAX_PENDING_REQUESTS
+              value: {{ .Values.thingsboard.transports.http.transportMaxPendingRequests | quote }}
+            - name: TB_QUEUE_KAFKA_MAX_POLL_RECORDS
+              value: {{ .Values.thingsboard.transports.http.kafkaMaxPollRecords | quote }}
+            - name: TB_QUEUE_KAFKA_MAX_POLL_INTERVAL_MS
+              value: {{ .Values.thingsboard.transports.http.kafkaMaxPollIntervalMs | quote }}
+            - name: TB_QUEUE_KAFKA_CONSUMER_THREADS
+              value: {{ .Values.thingsboard.transports.http.kafkaConsumerThreads | quote }}
+            - name: TB_QUEUE_KAFKA_BATCH_SIZE
+              value: {{ .Values.thingsboard.transports.http.kafkaBatchSize | quote }}
+            - name: TB_QUEUE_KAFKA_LINGER_MS
+              value: {{ .Values.thingsboard.transports.http.kafkaLingerMs | quote }}
+            - name: TB_QUEUE_KAFKA_BUFFER_MEMORY
+              value: {{ .Values.thingsboard.transports.http.kafkaBufferMemory | quote }}
+            - name: TB_QUEUE_KAFKA_REQUEST_TIMEOUT_MS
+              value: {{ .Values.thingsboard.transports.http.kafkaRequestTimeoutMs | quote }}
+            - name: TB_QUEUE_TRANSPORT_CONSUMER_THREADS
+              value: {{ .Values.thingsboard.transports.http.transportConsumerThreads | quote }}
+            - name: TB_QUEUE_TRANSPORT_NOTIFICATIONS_CONSUMER_THREADS
+              value: {{ .Values.thingsboard.transports.http.transportNotificationsConsumerThreads | quote }}
+            - name: TB_QUEUE_CORE_THREADS
+              value: {{ .Values.thingsboard.transports.http.coreThreads | quote }}
+            - name: TB_QUEUE_STATS_ENABLED
+              value: {{ .Values.thingsboard.transports.http.queueStatsEnabled | quote }}
+          resources:
+            limits:
+              cpu: {{ .Values.thingsboard.transports.http.resources.limits.cpu }}
