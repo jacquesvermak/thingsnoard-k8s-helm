@@ -22,6 +22,11 @@ spec:
       containers:
         - name: kafka
           image: {{ .Values.kafka.image.registry }}:{{ .Values.kafka.image.tag }}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              /etc/kafka/docker/run
           ports:
             - containerPort: 9092
               name: kafka
@@ -32,8 +37,8 @@ spec:
                   fieldPath: metadata.name
             - name: KAFKA_ZOOKEEPER_CONNECT
               value: "{{ .Values.zookeeper.serviceName }}.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local:2181"
-            - name: CLUSTER_ID
-              value: ""
+            - name: KAFKA_BROKER_ID
+              value: "1"
             - name: KAFKA_ADVERTISED_LISTENERS
               value: "PLAINTEXT://$(MY_POD_NAME).kafka.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local:9092"
             - name: KAFKA_LISTENERS
