@@ -21,20 +21,20 @@ spec:
             - |
               set -e
               echo "Waiting for Cassandra to be ready..."
-              until cqlsh cassandra 9042 -e "DESCRIBE KEYSPACES" > /dev/null 2>&1; do
+              until cqlsh cassandra.thingsboard-test.svc.cluster.local 9042 -e "DESCRIBE KEYSPACES" > /dev/null 2>&1; do
                 echo "Cassandra is unavailable - sleeping"
                 sleep 5
               done
               echo "Cassandra is ready. Running schema initialization..."
               
               echo "Creating keyspace..."
-              cqlsh cassandra 9042 -f /scripts/schema-keyspace.cql
+              cqlsh cassandra.thingsboard-test.svc.cluster.local 9042 -f /scripts/schema-keyspace.cql
               
               echo "Creating time-series tables..."
-              cqlsh cassandra 9042 -f /scripts/schema-ts.cql
+              cqlsh cassandra.thingsboard-test.svc.cluster.local 9042 -f /scripts/schema-ts.cql
               
               echo "Creating latest tables..."
-              cqlsh cassandra 9042 -f /scripts/schema-ts-latest.cql
+              cqlsh cassandra.thingsboard-test.svc.cluster.local 9042 -f /scripts/schema-ts-latest.cql
               
               echo "Schema initialization completed successfully!"
           volumeMounts:
