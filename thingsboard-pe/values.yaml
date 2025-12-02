@@ -163,9 +163,9 @@ cassandra:
     seeds: "cassandra-0.cassandra"
   resources:
     limits:
-      memory: 4Gi
+      memory: 8Gi
     requests:
-      memory: 2Gi
+      memory: 4Gi
   storage:
     size: 100Gi
     storageClass: "ebs-sc"
