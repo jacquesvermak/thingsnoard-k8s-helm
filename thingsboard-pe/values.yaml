@@ -61,7 +61,7 @@ thingsboard:
   transports:
     coap:
       enabled: true
-      replicas: 4
+      replicas: 1
       image:
         registry: docker.io/thingsboard/tb-pe-coap-transport
         tag: "4.0.1PE"
@@ -260,7 +260,7 @@ ingress:
 autoscaling:
   enabled: true
   coap:
-    minReplicas: 4
+    minReplicas: 1
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
   http:
