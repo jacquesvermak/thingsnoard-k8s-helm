@@ -103,7 +103,7 @@ data:
 
         export ZOOKEEPER_URL=thingsboard-zookeeper-0.thingsboard-zookeeper-headless.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local:2181
 
-        export TB_KAFKA_SERVERS=thingsboard-kafka:9092
+        export TB_KAFKA_SERVERS=kafka:9092
 
         export JS_EVALUATOR=remote
 
