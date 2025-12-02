@@ -43,7 +43,7 @@ spec:
         - name: TB_LICENSE_SECRET
           value: {{ .Values.global.tbLicenseSecret | quote }}
         - name: TB_LICENSE_VALIDATION_ENABLED
-          value: 'false'
+          value: 'true'
         - name: SWAGGER_ENABLED
           value: {{ .Values.thingsboard.node.env.SWAGGER_ENABLED | quote }}
         - name: TB_KAFKA_SERVERS
