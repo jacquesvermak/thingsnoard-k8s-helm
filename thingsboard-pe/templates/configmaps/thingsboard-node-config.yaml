@@ -167,8 +167,7 @@ data:
 
         export SPRING_DATASOURCE_PASSWORD=VF8sjO1yR68W1LxPzwoh
 
-        export
-        SPRING_DATASOURCE_URL=jdbc:postgresql://thingsboard-db-qa-k8s.cdhob2fjfmcq.af-south-1.rds.amazonaws.com:5432/thingsboard
+        export SPRING_DATASOURCE_URL=jdbc:postgresql://thingsboard-db-qa-k8s.cdhob2fjfmcq.af-south-1.rds.amazonaws.com:5432/thingsboard
 
         export SPRING_DATASOURCE_MAXIMUM_POOL_SIZE=40
 
