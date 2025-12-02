@@ -48,7 +48,7 @@ thingsboard:
     
     # DTLS Configuration
     dtls:
-      enabled: true
+      enabled: false
       certificatesConfigMap: coap-pem-configmap
       
     # Environment variables
@@ -66,7 +66,7 @@ thingsboard:
         registry: docker.io/thingsboard/tb-pe-coap-transport
         tag: "4.0.1PE"
       port: 5684
-      dtlsEnabled: true
+      dtlsEnabled: false
       service:
         type: LoadBalancer
         annotations:
@@ -197,7 +197,7 @@ kafka:
         registry: docker.io/thingsboard/tb-pe-coap-transport
         tag: "4.0.1PE"
       port: 5684
-      dtlsEnabled: true
+      dtlsEnabled: false
       service:
         type: LoadBalancer
         annotations:

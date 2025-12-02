@@ -76,7 +76,7 @@ spec:
           mountPath: /var/log/thingsboard
         - name: gc-logs
           mountPath: /var/log/tb
-        - name: tb-node-data
+        - name: thingsboard-node-data
           mountPath: /data
         - name: tb-solutions
           mountPath: /solutions
@@ -109,9 +109,9 @@ spec:
         emptyDir: {}
       - name: gc-logs
         emptyDir: {}
-      - name: tb-node-data
+      - name: thingsboard-node-data
         persistentVolumeClaim:
-          claimName: tb-node-data
+          claimName: thingsboard-node-data
       - name: tb-solutions
         configMap:
           name: tb-solutions-config
