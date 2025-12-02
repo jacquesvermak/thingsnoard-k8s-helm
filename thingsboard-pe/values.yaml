@@ -22,7 +22,7 @@ thingsboard:
       pullPolicy: Always
     env:
       REMOTE_JS_EVAL_REQUEST_TOPIC: js_eval.requests
-      TB_KAFKA_SERVERS: thingsboard-kafka:9092
+      TB_KAFKA_SERVERS: kafka:9092
       TB_QUEUE_KAFKA_REPLICATION_FACTOR: "1"
       LOGGER_LEVEL: info
       LOG_FOLDER: logs
