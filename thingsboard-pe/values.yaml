@@ -160,7 +160,7 @@ cassandra:
     name: cassandra
     datacenter: dc1
     rack: rack1
-    seeds: "cassandra-0.cassandra"
+    seeds: "cassandra-0.cassandra.thingsboard-test.svc.cluster.local"
   resources:
     limits:
       memory: 8Gi
