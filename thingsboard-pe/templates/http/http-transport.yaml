@@ -95,6 +95,11 @@ spec:
               value: {{ .Values.thingsboard.transports.http.coreThreads | quote }}
             - name: TB_QUEUE_STATS_ENABLED
               value: {{ .Values.thingsboard.transports.http.queueStatsEnabled | quote }}
+          volumeMounts:
+            - name: thingsboard-http-transport-config
+              mountPath: /config
+            - name: thingsboard-node-logs
+              mountPath: /var/log/thingsboard
           resources:
             limits:
               cpu: {{ .Values.thingsboard.transports.http.resources.limits.cpu }}
