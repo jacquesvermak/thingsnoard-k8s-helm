@@ -78,8 +78,6 @@ spec:
           mountPath: /var/log/tb
         - name: thingsboard-node-data
           mountPath: /data
-        - name: tb-solutions
-          mountPath: /solutions
         {{- if .Values.thingsboard.node.dtls.enabled }}
         - name: coap-pem-configmap
           mountPath: /https-config
