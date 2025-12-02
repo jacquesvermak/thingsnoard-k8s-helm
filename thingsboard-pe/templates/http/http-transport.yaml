@@ -35,7 +35,7 @@ spec:
           emptyDir: {}
       containers:
         - name: thingsboard
-          image: {{ .Values.thingsboard.transports.http.image.repository }}:{{ .Values.thingsboard.transports.http.image.tag }}
+          image: {{ .Values.thingsboard.transports.http.image.registry }}:{{ .Values.thingsboard.transports.http.image.tag }}
           ports:
             - name: http
               containerPort: {{ .Values.thingsboard.transports.http.port }}
