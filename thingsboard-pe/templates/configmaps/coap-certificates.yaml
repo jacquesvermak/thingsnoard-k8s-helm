@@ -18,7 +18,7 @@ data:
     SAAwRQIget7ssyB6DPBp4bK43RG1G3eOCH5Jrna9TNXJRBZLt4ECIQD6Dplf75yi
     BnW1JVbY2Glq4ClpqXhpBRcCeZVIkAGxPg==
     -----END CERTIFICATE-----
-        server_key.pem: |
+  server_key.pem: |
     -----BEGIN EC PARAMETERS-----
     BggqhkjOPQMBBw==
     -----END EC PARAMETERS-----

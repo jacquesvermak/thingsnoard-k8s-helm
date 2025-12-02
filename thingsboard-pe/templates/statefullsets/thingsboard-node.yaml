@@ -112,10 +112,6 @@ spec:
       - name: thingsboard-node-data
         persistentVolumeClaim:
           claimName: thingsboard-node-data
-      - name: tb-solutions
-        configMap:
-          name: tb-solutions-config
-          defaultMode: 444
       {{- if .Values.thingsboard.node.dtls.enabled }}
       - name: coap-pem-configmap
         configMap:
