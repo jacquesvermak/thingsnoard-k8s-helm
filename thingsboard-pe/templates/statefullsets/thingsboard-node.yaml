@@ -116,12 +116,6 @@ spec:
       - name: coap-pem-configmap
         configMap:
           name: {{ .Values.thingsboard.node.dtls.certificatesConfigMap }}
-          defaultMode: 444
-          items:
-          - key: server.pem
-            path: server.pem
-          - key: server_key.pem
-            path: server_key.pem
       {{- end }}
   volumeClaimTemplates:
   - metadata:
