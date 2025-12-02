@@ -22,11 +22,6 @@ spec:
       containers:
         - name: kafka
           image: {{ .Values.kafka.image.registry }}:{{ .Values.kafka.image.tag }}
-          command:
-            - /bin/bash
-            - -c
-            - |
-              /etc/kafka/docker/run
           ports:
             - containerPort: 9092
               name: kafka
