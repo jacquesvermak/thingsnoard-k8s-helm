@@ -1,0 +1,49 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cassandra-init-schema
+  namespace: {{ .Values.global.namespace }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 10
+  template:
+    metadata:
+      labels:
+        app: cassandra-init
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: cassandra-init
+          image: {{ .Values.cassandra.image.registry }}:{{ .Values.cassandra.image.tag }}
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              echo "Waiting for Cassandra to be ready..."
+              until cqlsh cassandra 9042 -e "DESCRIBE KEYSPACES" > /dev/null 2>&1; do
+                echo "Cassandra is unavailable - sleeping"
+                sleep 5
+              done
+              echo "Cassandra is ready. Running schema initialization..."
+              
+              echo "Creating keyspace..."
+              cqlsh cassandra 9042 -f /scripts/schema-keyspace.cql
+              
+              echo "Creating time-series tables..."
+              cqlsh cassandra 9042 -f /scripts/schema-ts.cql
+              
+              echo "Creating latest tables..."
+              cqlsh cassandra 9042 -f /scripts/schema-ts-latest.cql
+              
+              echo "Schema initialization completed successfully!"
+          volumeMounts:
+            - name: init-scripts
+              mountPath: /scripts
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: cassandra-init-scripts
