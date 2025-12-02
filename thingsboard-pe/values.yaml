@@ -163,9 +163,9 @@ cassandra:
     seeds: "cassandra-0.cassandra"
   resources:
     limits:
-      memory: 512Mi
+      memory: 4Gi
     requests:
-      memory: 256Mi
+      memory: 2Gi
   storage:
     size: 100Gi
     storageClass: "ebs-sc"
@@ -176,7 +176,7 @@ kafka:
   serviceName: "kafka"
   image:
     registry: harbor.qa.stagezero.co.za/kafka/kafka
-    tag: "4.1.1"
+    tag: "3.7.1"
   replicas: 1
   resources:
     limits:
