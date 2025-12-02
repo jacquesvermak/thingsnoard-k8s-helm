@@ -76,6 +76,10 @@ spec:
           mountPath: /var/log/thingsboard
         - name: gc-logs
           mountPath: /var/log/tb
+        - name: tb-node-data
+          mountPath: /data
+        - name: tb-solutions
+          mountPath: /solutions
         {{- if .Values.thingsboard.node.dtls.enabled }}
         - name: coap-pem-configmap
           mountPath: /https-config
@@ -105,6 +109,13 @@ spec:
         emptyDir: {}
       - name: gc-logs
         emptyDir: {}
+      - name: tb-node-data
+        persistentVolumeClaim:
+          claimName: tb-node-data
+      - name: tb-solutions
+        configMap:
+          name: tb-solutions-config
+          defaultMode: 444
       {{- if .Values.thingsboard.node.dtls.enabled }}
       - name: coap-pem-configmap
         configMap:

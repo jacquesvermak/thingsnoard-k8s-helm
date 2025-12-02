@@ -1,4 +1,3 @@
-
 name: Helm Chart Package & Push to Harbor
 
 on:
@@ -41,12 +40,6 @@ jobs:
         run: |
           helm package thingsboard-pe --version ${{ steps.chartver.outputs.version }}
 
-      - name: Write Harbor CA certificate
-        run: echo "${{ secrets.HARBOR_CA_CERT }}" | base64 -d > /usr/local/share/ca-certificates/harbor-ca.crt
-
-      - name: Update CA trust
-        run: sudo update-ca-certificates
-
       - name: Push chart to Harbor
         run: |
-          helm push thingsboard-pe-${{ steps.chartver.outputs.version }}.tgz oci://${{ env.HARBOR_URL }}/${{ env.HARBOR_PROJECT }}/ --ca-file /usr/local/share/ca-certificates/harbor-ca.crt
+          helm push thingsboard-pe-${{ steps.chartver.outputs.version }}.tgz oci://${{ env.HARBOR_URL }}/${{ env.HARBOR_PROJECT }}/ --ca-file harbor-ca.crt

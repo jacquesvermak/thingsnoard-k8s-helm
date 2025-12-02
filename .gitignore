@@ -1,0 +1,20 @@
+# Helm packaged charts
+*.tgz
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Kubernetes temp files
+*.kubeconfig

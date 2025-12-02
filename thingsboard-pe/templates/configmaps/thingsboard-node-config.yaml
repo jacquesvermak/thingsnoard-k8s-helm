@@ -4,12 +4,7 @@ metadata:
     name: thingsboard-node-config
     namespace: {{ include "thingsboard-pe.namespace" . }}
     labels:
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: thingsboard
-    app.kubernetes.io/version: {{ .Chart.AppVersion }}
-    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-spec: {}
+        app: thingsboard
 data:
   conf: |-
     # Java Options
@@ -44,7 +39,7 @@ data:
         export LOG_FILENAME=thingsboard.out
 
         export
-        LOADER_PATH=/usr/share/thingsboard/conf,/usr/share/thingsboard/extensions
+        LOADER_PATH=/usr/share/thingsboard/conf
 
 
         # Service & Metrics

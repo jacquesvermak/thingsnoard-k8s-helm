@@ -1,3 +1,38 @@
+# Creating Harbor Image Pull Secrets
+
+Before deploying, create the required image pull secrets in your target namespace:
+
+```
+kubectl create secret docker-registry harbor-zookeeper-pull-secret \
+  --docker-server=harbor.qa.stagezero.co.za \
+  --docker-username=<your-username> \
+  --docker-password=<your-password> \
+  --docker-email=<your-email> \
+  -n thingsboard-test
+
+kubectl create secret docker-registry harbor-cassandra-pull-secret \
+  --docker-server=harbor.qa.stagezero.co.za \
+  --docker-username=<your-username> \
+  --docker-password=<your-password> \
+  --docker-email=<your-email> \
+  -n thingsboard-test
+
+kubectl create secret docker-registry harbor-kafka-pull-secret \
+  --docker-server=harbor.qa.stagezero.co.za \
+  --docker-username=<your-username> \
+  --docker-password=<your-password> \
+  --docker-email=<your-email> \
+  -n thingsboard-test
+
+kubectl create secret docker-registry harbor-redis-pull-secret \
+  --docker-server=harbor.qa.stagezero.co.za \
+  --docker-username=<your-username> \
+  --docker-password=<your-password> \
+  --docker-email=<your-email> \
+  -n thingsboard-test
+```
+
+Replace `<your-username>`, `<your-password>`, and `<your-email>` with your Harbor credentials.
 # ThingsBoard Helm Chart
 
 This repository contains Helm charts for deploying ThingsBoard PE (Professional Edition) and its dependencies on Kubernetes.

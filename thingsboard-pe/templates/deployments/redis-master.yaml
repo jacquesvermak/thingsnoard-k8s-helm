@@ -10,9 +10,8 @@ spec:
   replicas: {{ .Values.redis.master.replicas | default 3 }}
   selector:
     matchLabels:
-      app.kubernetes.io/component: master
-      app.kubernetes.io/instance: thingsboard
-      app.kubernetes.io/name: redis
+      app: redis
+      component: master
   template:
     metadata:
       labels:
