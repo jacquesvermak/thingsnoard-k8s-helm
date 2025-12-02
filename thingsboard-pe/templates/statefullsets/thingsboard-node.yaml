@@ -60,6 +60,8 @@ spec:
           value: {{ .Values.thingsboard.node.env.SWAGGER_ENABLED | quote }}
         - name: TB_KAFKA_SERVERS
           value: {{ .Values.thingsboard.node.env.TB_KAFKA_SERVERS | quote }}
+        - name: CASSANDRA_URL
+          value: cassandra.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local:9042
         {{- if .Values.thingsboard.node.dtls.enabled }}
         - name: COAP_DTLS_ENABLED
           value: "true"
