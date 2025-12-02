@@ -26,16 +26,16 @@ spec:
     spec:
       initContainers:
       - name: wait-for-cassandra
-        image: busybox:1.35
+        image: cassandra:5.0.6
         command:
         - sh
         - -c
         - |
-          until nc -z cassandra.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local 9042; do
-            echo "Waiting for Cassandra to be ready..."
-            sleep 5
+          until cqlsh cassandra.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local -u cassandra -p cassandra -e "DESCRIBE KEYSPACES;" | grep thingsboard; do
+            echo "Waiting for Cassandra to be ready and have thingsboard keyspace..."
+            sleep 10
           done
-          echo "Cassandra is ready!"
+          echo "Cassandra is ready with thingsboard keyspace!"
       containers:
       - name: thingsboard-node
         image: "{{ .Values.thingsboard.image.registry }}:{{ .Values.thingsboard.image.tag }}"
