@@ -48,7 +48,7 @@ thingsboard:
     
     # DTLS Configuration
     dtls:
-      enabled: false
+      enabled: true
       certificatesConfigMap: coap-pem-configmap
       
     # Environment variables
@@ -66,7 +66,7 @@ thingsboard:
         registry: docker.io/thingsboard/tb-pe-coap-transport
         tag: "4.0.1PE"
       port: 5684
-      dtlsEnabled: false
+      dtlsEnabled: true
       service:
         type: LoadBalancer
         annotations:
@@ -197,7 +197,7 @@ kafka:
         registry: docker.io/thingsboard/tb-pe-coap-transport
         tag: "4.0.1PE"
       port: 5684
-      dtlsEnabled: false
+      dtlsEnabled: true
       service:
         type: LoadBalancer
         annotations:
@@ -292,5 +292,30 @@ redis:
 
 security:
   certificates:
-    enabled: false
+    enabled: true
+    dtls:
+      serverCert: |
+        -----BEGIN CERTIFICATE-----
+        MIIB9TCCAZsCFFGkN9f4vnxw/nPIhOCvI1tJbvmsMAoGCCqGSM49BAMCMH0xCzAJ
+        BgNVBAYTAlpBMRUwEwYDVQQIDAxXZXN0ZXJuIENhcGUxEjAQBgNVBAcMCUNhcGUg
+        VG93bjESMBAGA1UECgwJU3RhZ2VaZXJvMQ0wCwYDVQQLDARDb0FQMSAwHgYDVQQD
+        DBdjb2FwLnFhLnN0YWdlemVyby5jby56YTAeFw0yNDEyMDIxNjU2MjFaFw0yNTEy
+        MDIxNjU2MjFaMH0xCzAJBgNVBAYTAlpBMRUwEwYDVQQIDAxXZXN0ZXJuIENhcGUx
+        EjAQBgNVBAcMCUNhcGUgVG93bjESMBAGA1UECgwJU3RhZ2VaZXJvMQ0wCwYDVQQL
+        DARDb0FQMSAwHgYDVQQDDBdjb2FwLnFhLnN0YWdlemVyby5jby56YTBZMBMGByqG
+        SM49AgEGCCqGSM49AwEHA0IABNFTlCwq4AbdEQiHztUj0C4SkiQf418fXuGuGqFZ
+        ufH9gX2Q8PzGvjbhpYpJDIA7f7SMR1CRh15A3q2tFT8FTbwwCgYIKoZIzj0EAwID
+        SAAwRQIget7ssyB6DPBp4bK43RG1G3eOCH5Jrna9TNXJRBZLt4ECIQD6Dplf75yi
+        BnW1JVbY2Glq4ClpqXhpBRcCeZVIkAGxPg==
+        -----END CERTIFICATE-----
+      serverKey: |
+        -----BEGIN EC PARAMETERS-----
+        BggqhkjOPQMBBw==
+        -----END EC PARAMETERS-----
+        -----BEGIN EC PRIVATE KEY-----
+        MHcCAQEEICL3QXJkBZz0Ew6smaY4gKS3W+i7kcXGkcWANslQb6w2oAoGCCqGSM49
+        AwEHoUQDQgAE0VOULCrgBt0RCIfO1SPQLhKSJB/jXx9e4a4aoVm58f2BfZDw/Ma+
+        NuGlikkMgDt/tIxHUJGHXkDera0VPwVNvA==
+        -----END EC PRIVATE KEY-----
+
 
