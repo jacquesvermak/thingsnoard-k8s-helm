@@ -21,8 +21,52 @@ spec:
           image: {{ .Values.cassandra.image.registry }}:{{ .Values.cassandra.image.tag }}
           ports:
             - containerPort: 9042
+          env:
+            - name: CASSANDRA_CLUSTER_NAME
+              value: {{ .Values.cassandra.cluster.name | quote }}
+            - name: CASSANDRA_SEEDS
+              value: {{ .Values.cassandra.cluster.seeds | quote }}
+            - name: CASSANDRA_DC
+              value: {{ .Values.cassandra.cluster.datacenter | quote }}
+            - name: CASSANDRA_RACK
+              value: {{ .Values.cassandra.cluster.rack | quote }}
+            - name: CASSANDRA_ENDPOINT_SNITCH
+              value: "GossipingPropertyFileSnitch"
+            - name: MAX_HEAP_SIZE
+              value: "2G"
+            - name: HEAP_NEWSIZE
+              value: "512M"
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          volumeMounts:
+            - name: cassandra-data
+              mountPath: /var/lib/cassandra
           resources:
             limits:
               memory: {{ .Values.cassandra.resources.limits.memory }}
             requests:
               memory: {{ .Values.cassandra.resources.requests.memory }}
+          livenessProbe:
+            tcpSocket:
+              port: 9042
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - "nodetool status | grep -E '^UN\\s+${POD_IP}'"
+            initialDelaySeconds: 90
+            periodSeconds: 30
+  volumeClaimTemplates:
+    - metadata:
+        name: cassandra-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: {{ .Values.cassandra.storage.storageClass | quote }}
+        resources:
+          requests:
+            storage: {{ .Values.cassandra.storage.size }}
