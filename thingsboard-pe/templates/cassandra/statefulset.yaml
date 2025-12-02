@@ -58,9 +58,10 @@ spec:
               command:
                 - /bin/bash
                 - -c
-                - "nodetool status | grep -E '^UN\\s+${POD_IP}'"
+                - "nodetool status | grep '^UN'"
             initialDelaySeconds: 90
             periodSeconds: 30
+            timeoutSeconds: 10
   volumeClaimTemplates:
     - metadata:
         name: cassandra-data
