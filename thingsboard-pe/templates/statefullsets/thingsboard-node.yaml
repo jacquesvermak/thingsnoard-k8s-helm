@@ -24,6 +24,18 @@ spec:
         prometheus.io/port: "8080"
         prometheus.io/path: "/actuator/prometheus"
     spec:
+      initContainers:
+      - name: wait-for-cassandra
+        image: busybox:1.35
+        command:
+        - sh
+        - -c
+        - |
+          until nc -z cassandra.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local 9042; do
+            echo "Waiting for Cassandra to be ready..."
+            sleep 5
+          done
+          echo "Cassandra is ready!"
       containers:
       - name: thingsboard-node
         image: "{{ .Values.thingsboard.image.registry }}:{{ .Values.thingsboard.image.tag }}"
