@@ -79,8 +79,6 @@ spec:
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       dnsPolicy: ClusterFirst
-      serviceAccountName: thingsboard-node-sa
-      serviceAccount: thingsboard-node-sa
       securityContext: {}
       schedulerName: default-scheduler
   strategy:
