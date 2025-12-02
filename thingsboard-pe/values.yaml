@@ -275,6 +275,7 @@ redis:
     password: setplease
   master:
     kind: Deployment
+    replicas: 1
     persistence:
       enabled: false
     disableCommands:
