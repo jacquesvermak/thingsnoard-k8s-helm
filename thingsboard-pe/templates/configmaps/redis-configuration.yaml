@@ -13,6 +13,8 @@ data:
     # End of master configuration
   redis.conf: |-
     # User-supplied common configuration:
+    # Bind to all interfaces
+    bind 0.0.0.0
     # Disable persistence for ephemeral deployment
     appendonly no
     save ""
