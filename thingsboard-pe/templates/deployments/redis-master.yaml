@@ -10,13 +10,15 @@ spec:
   replicas: {{ .Values.redis.master.replicas | default 3 }}
   selector:
     matchLabels:
-      app: redis
-      component: master
+      app.kubernetes.io/name: redis
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: master
   template:
     metadata:
       labels:
-        app: redis
-        component: master
+        app.kubernetes.io/name: redis
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: master
     spec:
       imagePullSecrets:
         - name: harbor-redis-pull-secret
