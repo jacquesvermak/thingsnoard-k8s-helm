@@ -90,6 +90,33 @@ thingsboard:
         registry: docker.io/thingsboard/tb-pe-http-transport
         tag: "4.0.1PE"
       port: 8080
+      serviceId: "tb-http-transport"
+      queueType: "kafka"
+      bindAddress: "0.0.0.0"
+      bindPort: "8080"
+      requestTimeout: "60000"
+      kafkaServers: "kafka:9092"
+      kafkaReplicationFactor: "1"
+      kafkaPartitions: "10"
+      nettyBossThreads: "1"
+      nettyWorkerThreads: "12"
+      nettyMaxPayloadSize: "65536"
+      nettySoKeepAlive: "false"
+      maxRequestTimeout: "60000"
+      coreShutdownWaitTimeMs: "5000"
+      shutdownTimeoutMs: "5000"
+      transportMaxPendingRequests: "10000"
+      kafkaMaxPollRecords: "1024"
+      kafkaMaxPollIntervalMs: "300000"
+      kafkaConsumerThreads: "4"
+      kafkaBatchSize: "16384"
+      kafkaLingerMs: "1"
+      kafkaBufferMemory: "33554432"
+      kafkaRequestTimeoutMs: "30000"
+      transportConsumerThreads: "10"
+      transportNotificationsConsumerThreads: "10"
+      coreThreads: "10"
+      queueStatsEnabled: "true"
       service:
         type: LoadBalancer
         annotations:
