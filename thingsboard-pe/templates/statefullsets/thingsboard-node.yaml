@@ -100,14 +100,18 @@ spec:
           httpGet:
             path: /login
             port: http
-          initialDelaySeconds: 360
-          periodSeconds: 10
+          initialDelaySeconds: 600
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 5
         readinessProbe:
           httpGet:
             path: /login
             port: http
-          initialDelaySeconds: 15
-          periodSeconds: 10
+          initialDelaySeconds: 300
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
       volumes:
       - name: thingsboard-node-config
         configMap:
