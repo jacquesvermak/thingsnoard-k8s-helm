@@ -142,6 +142,8 @@ thingsboard:
         memory: 4Gi
 
 # Database configuration - AWS Aurora PostgreSQL
+# PostgreSQL Database Configuration
+# For production, update these values with production database credentials
 database:
   url: "jdbc:postgresql://thingsboard-db-qa-k8s.cdhob2fjfmcq.af-south-1.rds.amazonaws.com:5432/thingsboard"
   username: "postgres"
