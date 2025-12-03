@@ -37,8 +37,6 @@ spec:
               containerPort: 6379
               protocol: TCP
           env:
-            - name: REDIS_PASSWORD
-              value: {{ .Values.redis.auth.password | quote }}
             - name: REDIS_PORT
               value: "6379"
           volumeMounts:
