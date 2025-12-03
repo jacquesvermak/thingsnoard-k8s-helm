@@ -22,6 +22,7 @@ data:
   CASSANDRA_USERNAME: {{ .Values.cassandra.username | default "cassandra" | quote }}
   CASSANDRA_PASSWORD: {{ .Values.cassandra.password | default "cassandra" | quote }}
   CASSANDRA_USE_CREDENTIALS: "true"
+  CASSANDRA_LOCAL_DATACENTER: "dc1"
   DATABASE_TS_TYPE: "cassandra"
   DATABASE_TS_LATEST_TYPE: "cassandra"
   {{- end }}
