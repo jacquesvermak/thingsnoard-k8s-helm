@@ -31,9 +31,9 @@ data:
   TB_QUEUE_KAFKA_BOOTSTRAP_SERVERS: "{{ .Values.kafka.serviceName }}.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local:9092"
   
   # Redis Cache
-  SPRING_DATA_REDIS_HOST: "thingsboard-redis-master.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local"
+  SPRING_DATA_REDIS_HOST: "{{ .Values.redis.masterServiceName }}"
   SPRING_DATA_REDIS_PORT: "6379"
-  REDIS_HOST: "thingsboard-redis-master.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local"
+  REDIS_HOST: "{{ .Values.redis.masterServiceName }}"
   REDIS_PORT: "6379"
   CACHE_TYPE: "redis"
   
