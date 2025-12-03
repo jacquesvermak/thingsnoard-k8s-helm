@@ -55,9 +55,12 @@ spec:
             fieldRef:
               fieldPath: metadata.name
         - name: TB_LICENSE_SECRET
-          value: {{ .Values.global.tbLicenseSecret | quote }}
-        - name: TB_LICENSE_VALIDATION_ENABLED
-          value: 'true'
+          valueFrom:
+            secretKeyRef:
+              name: thingsboard-license
+              key: license-key
+        - name: TB_LICENSE_INSTANCE_DATA_FILE
+          value: /data/license.data
         - name: SWAGGER_ENABLED
           value: {{ .Values.thingsboard.node.env.SWAGGER_ENABLED | quote }}
         - name: TB_KAFKA_SERVERS
