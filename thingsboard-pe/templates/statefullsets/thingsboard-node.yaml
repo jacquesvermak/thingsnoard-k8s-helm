@@ -55,10 +55,7 @@ spec:
             fieldRef:
               fieldPath: metadata.name
         - name: TB_LICENSE_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: thingsboard-license
-              key: license-key
+          value: "biGeBHrEO4LaxCqPQa9imyFL"
         - name: TB_LICENSE_INSTANCE_DATA_FILE
           value: /data/license.data
         - name: TB_LICENSE_VALIDATION_ENABLED
