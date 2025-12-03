@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: thingsboard-webui
+  namespace: {{ include "thingsboard-pe.namespace" . }}
+  labels:
+    {{- include "thingsboard-pe.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webui
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8084
+      targetPort: 8084
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/instance: thingsboard-webui
+    app.kubernetes.io/name: thingsboard-webui
