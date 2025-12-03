@@ -253,8 +253,9 @@ zookeeper:
 
 # Ingress configuration
 ingress:
-  host: "thingsboard.local"
+  host: "thingsboard-test.qa.stagezero.co.za"
   className: "nginx"
+  tlsSecret: "thingsboard-tls"
 
 # Horizontal Pod Autoscaling
 autoscaling:
