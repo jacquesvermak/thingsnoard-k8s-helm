@@ -59,8 +59,6 @@ spec:
             secretKeyRef:
               name: thingsboard-license
               key: license-key
-        - name: TB_LICENSE_INSTANCE_DATA_FILE
-          value: /data/license.data
         - name: TB_LICENSE_SERVER_URL
           value: "https://license.thingsboard.io"
         - name: TB_LICENSE_CHECK_INTERVAL_MS
@@ -143,21 +141,12 @@ spec:
       - name: gc-logs
         emptyDir: {}
       - name: thingsboard-node-data
-        persistentVolumeClaim:
-          claimName: thingsboard-node-data
+        emptyDir: {}
       {{- if .Values.thingsboard.node.dtls.enabled }}
       - name: coap-pem-configmap
         configMap:
           name: {{ .Values.thingsboard.node.dtls.certificatesConfigMap }}
       {{- end }}
-  volumeClaimTemplates:
-  - metadata:
-      name: thingsboard-node-data
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      resources:
-        requests:
-          storage: 10Gi
   updateStrategy:
     type: RollingUpdate
 {{- end }}
