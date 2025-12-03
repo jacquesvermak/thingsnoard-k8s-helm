@@ -118,7 +118,7 @@ data:
 
         export REDIS_TIMEOUT=10000
 
-        export REDIS_HOST=thingsboard-redis-master
+        export REDIS_HOST=thingsboard-redis-master.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local
 
         export REDIS_PASSWORD=setplease
 
