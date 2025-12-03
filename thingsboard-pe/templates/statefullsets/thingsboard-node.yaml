@@ -26,8 +26,6 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
-        runAsUser: 1000
-        runAsNonRoot: true
       initContainers:
       - name: wait-for-cassandra
         image: cassandra:5.0.6
