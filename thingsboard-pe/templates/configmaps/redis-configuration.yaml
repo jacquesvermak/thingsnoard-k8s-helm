@@ -13,12 +13,9 @@ data:
     # End of master configuration
   redis.conf: |-
     # User-supplied common configuration:
-    # Enable AOF https://redis.io/topics/persistence#append-only-file
-    appendonly yes
-    # Disable RDB persistence, AOF persistence already enabled.
+    # Disable persistence for ephemeral deployment
+    appendonly no
     save ""
-    auto-aof-rewrite-percentage 100
-    auto-aof-rewrite-min-size 32mb
     maxmemory 8gb
     maxmemory-policy allkeys-lru
     tcp-keepalive 60
