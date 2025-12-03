@@ -120,7 +120,7 @@ data:
 
         export REDIS_HOST=thingsboard-redis-master.{{ include "thingsboard-pe.namespace" . }}.svc.cluster.local
 
-        export REDIS_PASSWORD=setplease
+        # Redis password not set - using no-auth mode
 
 
         # JWT & Timeouts
