@@ -55,9 +55,24 @@ spec:
             fieldRef:
               fieldPath: metadata.name
         - name: TB_LICENSE_SECRET
-          value: "biGeBHrEO4LaxCqPQa9imyFL"
+          valueFrom:
+            secretKeyRef:
+              name: thingsboard-license
+              key: license-key
+        - name: TB_LICENSE_INSTANCE_DATA_FILE
+          value: /data/license.data
+        - name: TB_LICENSE_SERVER_URL
+          value: "https://license.thingsboard.io"
+        - name: TB_LICENSE_CHECK_INTERVAL_MS
+          value: "60000"
+        - name: TB_LICENSE_RETRY_INTERVAL_MS
+          value: "10000"
         - name: TB_LICENSE_VALIDATION_ENABLED
           value: "true"
+        - name: TB_LICENSE_VALIDATION_RETRY_COUNT
+          value: "10"
+        - name: TB_LICENSE_VALIDATION_RETRY_DELAY_MS
+          value: "30000"
         - name: SWAGGER_ENABLED
           value: {{ .Values.thingsboard.node.env.SWAGGER_ENABLED | quote }}
         - name: TB_KAFKA_SERVERS
